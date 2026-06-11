@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Var Mısın Yok Musun</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-dark: #0a0e27;
+            --box-blue: #1a237e;
+            --gold: #ffd700;
+            --blue-prize: #2196f3;
+            --yellow-prize: #ffc107;
+            --red-prize: #f44336;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a237e 0%, #0d1442 100%);
+            color: white;
+            overflow: hidden;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .orientation-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .orientation-warning.show {
+            display: flex;
+        }
+
+        @media screen and (orientation: portrait) {
+            .orientation-warning.show {
+                display: flex;
+            }
+        }
+
+        .game-wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .prize-tree-left {
+            width: 12%;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            overflow-y: auto;
+            border-right: 2px solid var(--gold);
+        }
+
+        .prize-item {
+            padding: 8px 5px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .prize-item.blue { 
+            background: linear-gradient(90deg, var(--blue-prize), #64b5f6); 
+            color: #000;
+            box-shadow: 0 2px 5px rgba(33, 150, 243, 0.4);
+        }
+        .prize-item.yellow { 
+            background: linear-gradient(90deg, var(--yellow-prize), #ffe082); 
+            color: #000;
+            box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
+        }
+        .prize-item.red { 
+            background: linear-gradient(90deg, var(--red-prize), #ef5350); 
+            color: #fff;
+            box-shadow: 0 2px 5px rgba(244, 67, 54, 0.4);        }
+
+        .prize-item.opened {
+            opacity: 0.15;
+            filter: grayscale(100%);
+            transform: scale(0.95);
+        }
+
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            margin-bottom: 5px;
+        }
+
+        .stage-info {
+            background: rgba(255,215,0,0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 700;
+            border: 2px solid var(--gold);
+        }
+
+        .boxes-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .boxes-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            max-width: 900px;
+            width: 100%;        }
+
+        .game-box {
+            aspect-ratio: 4/3;
+            background: linear-gradient(145deg, #283593, #1a237e);
+            border: 3px solid var(--gold);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .game-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .game-box:active {
+            transform: scale(0.95);
+        }
+
+        .game-box.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(80%);
+        }
+
+        .game-box.player-box {
+            background: linear-gradient(145deg, var(--gold), #ff8f00);
+            border-color: #fff;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            animation: playerBoxPulse 2s infinite;
+        }
+
+        @keyframes playerBoxPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 1); }
+        }
+
+        .box-number {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+        .box-avatar {
+            font-size: 2rem;
+        }
+
+        .game-box.player-box .box-number {
+            color: #000;
+        }
+
+        .bottom-info {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+
+        .info-box {
+            text-align: center;
+            padding: 10px 20px;
+            background: rgba(255,215,0,0.1);
+            border-radius: 10px;
+            border: 2px solid var(--gold);
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--gold);
+        }
+
+        .prize-tree-right {
+            width: 12%;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            overflow-y: auto;
+            border-left: 2px solid var(--gold);
+        }
+        .box-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .box-modal.show {
+            display: flex;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .opening-box {
+            width: 300px;
+            height: 250px;
+            background: linear-gradient(145deg, #283593, #1a237e);
+            border: 5px solid var(--gold);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+            animation: boxShake 0.5s;
+        }
+
+        @keyframes boxShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .opening-box.opening {
+            animation: boxOpen 1s forwards;
+        }
+
+        @keyframes boxOpen {            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .opening-box .box-number {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .revealed-prize {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.5s;
+        }
+
+        .revealed-prize.show {
+            opacity: 1;
+            transform: scale(1);
+            animation: prizePop 0.5s;
+        }
+
+        @keyframes prizePop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .banker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 6000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banker-modal.show {
+            display: flex;
+            animation: fadeIn 0.5s;
+        }
+        .banker-content {
+            background: linear-gradient(135deg, #1a237e, #0d1442);
+            border: 4px solid var(--gold);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
+            animation: phoneRing 0.5s;
+        }
+
+        @keyframes phoneRing {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .banker-title {
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .banker-offer {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #4caf50;
+            margin: 30px 0;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .banker-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #4caf50, #45a049);            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 7000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-modal.show {
+            display: flex;
+        }
+
+        .result-content {
+            background: linear-gradient(135deg, #1a237e, #0d1442);
+            border: 4px solid var(--gold);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .result-amount {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--gold);            margin: 30px 0;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 8000;
+        }
+
+        .start-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            z-index: 4000;
+            cursor: pointer;
+            animation: startMessagePulse 2s infinite;
+        }
+
+        @keyframes startMessagePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+        }
+
+        .start-message h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .start-message.hide {
+            display: none;
+        }
+
+        @media screen and (max-height: 700px) {
+            .boxes-grid { gap: 8px; }
+            .game-box { aspect-ratio: 4/3; }
+            .box-number { font-size: 1.2rem; }
+            .box-avatar { font-size: 1.5rem; }
+        }
+
+        @media screen and (max-width: 1200px) {            .prize-tree-left, .prize-tree-right { width: 10%; font-size: 0.7rem; }
+            .boxes-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="orientation-warning" id="orientation-warning">
+        <div>
+            <h2 style="color: var(--gold); margin-bottom: 20px;">📱 Lütfen Telefonunuzu Yatay Tutun</h2>
+            <p>Bu oyun yatay ekran (landscape) modunda oynanır.</p>
+        </div>
+    </div>
+
+    <canvas id="fireworks-canvas"></canvas>
+
+    <div class="game-wrapper">
+        <div class="prize-tree-left" id="prize-tree-left"></div>
+
+        <div class="game-area">
+            <div class="header">
+                <h1>📦 VAR MISIN YOK MUSUN 📦</h1>
+                <div class="stage-info" id="stage-info">Kendi kutunuzu seçin!</div>
+            </div>
+
+            <div class="boxes-container">
+                <div class="boxes-grid" id="boxes-grid"></div>
+            </div>
+
+            <div class="bottom-info">
+                <div class="info-box">
+                    <div class="info-label">Son Teklif</div>
+                    <div class="info-value" id="last-offer">0 TL</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">KUTUNUZ</div>
+                    <div class="info-value" id="player-box-num">?</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Teklife Kalan</div>
+                    <div class="info-value" id="boxes-remaining">22</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="prize-tree-right" id="prize-tree-right"></div>
+    </div>
+
+    <div class="box-modal" id="box-modal">
+        <div class="opening-box" id="opening-box">            <div class="box-number" id="modal-box-num">1</div>
+            <div class="box-avatar">📦</div>
+            <div class="revealed-prize" id="revealed-prize">0 TL</div>
+        </div>
+    </div>
+
+    <div class="banker-modal" id="banker-modal">
+        <div class="banker-content">
+            <div class="banker-title">📞 BANKER ARIYOR!</div>
+            <div style="font-size: 1.2rem; margin-bottom: 10px;">Size bir teklif sunuyor:</div>
+            <div class="banker-offer" id="banker-offer">0 TL</div>
+            <div class="banker-buttons">
+                <button class="btn btn-yes" onclick="acceptOffer()">VARIM!</button>
+                <button class="btn btn-no" onclick="rejectOffer()">YOKUM!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-modal" id="result-modal">
+        <div class="result-content">
+            <div class="result-title" id="result-title">TEBRİKLER!</div>
+            <div style="font-size: 1.3rem; margin-bottom: 20px;" id="result-message"></div>
+            <div class="result-amount" id="result-amount">0 TL</div>
+            <button class="btn btn-yes" onclick="initGame()" style="margin-top: 30px;">YENİ OYUN</button>
+        </div>
+    </div>
+
+    <div class="start-message" id="start-message" onclick="closeStartMessage()">
+        <h2>Hoş Geldiniz!</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 20px;">1-22 arası bir kutu seçerek başlayın</p>
+        <p style="color: #aaa; font-size: 0.9rem;">(Başlamak için bir kutuya tıklayın)</p>
+    </div>
+
+    <script>
+        const prizes = [
+            1, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000,
+            25000, 50000, 100000, 250000, 500000,
+            750000, 1000000, 2000000, 3000000, 5000000, 5000000
+        ];
+
+        const avatars = ['😀','😎','🤠','','','😋','','😍','🥰','','','😺','','🦹','','','👸','','','🤖','','👻'];
+        
+        let boxContents = {};
+        let playerBox = null;
+        let openedBoxes = [];
+        let currentStage = 0;
+        const stages = [4, 3, 3, 3, 3, 2, 2];
+        let openedInCurrentStage = 0;
+        let gameActive = false;
+        let currentOffer = 0;        let lastOffer = 0;
+        let startMessageClosed = false;
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        // İYİLEŞTİRİLMİŞ: Eski tip telefon zili sesi
+        function playPhoneRing() {
+            const now = audioCtx.currentTime;
+            
+            // İlk zil
+            playRingCycle(now);
+            // İkinci zil
+            playRingCycle(now + 0.8);
+            // Üçüncü zil
+            playRingCycle(now + 1.6);
+        }
+
+        function playRingCycle(startTime) {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            // Klasik telefon zili frekansı (440 Hz ve 480 Hz karışımı)
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, startTime);
+            osc.frequency.setValueAtTime(480, startTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(0.4, startTime + 0.05);
+            gainNode.gain.setValueAtTime(0.4, startTime + 0.2);
+            gainNode.gain.linearRampToValueAtTime(0, startTime + 0.3);
+            
+            osc.start(startTime);
+            osc.stop(startTime + 0.35);
+        }
+
+        // İYİLEŞTİRİLMİŞ: Gerçekçi dram/gerilim müziği
+        function playDramSound() {
+            const now = audioCtx.currentTime;
+            
+            // Bas davul vuruşları
+            for (let i = 0; i < 8; i++) {
+                const time = now + i * 0.15;
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);                gain.connect(audioCtx.destination);
+                
+                osc.frequency.setValueAtTime(80, time);
+                osc.frequency.exponentialRampToValueAtTime(40, time + 0.1);
+                osc.type = 'square';
+                
+                gain.gain.setValueAtTime(0.3, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                
+                osc.start(time);
+                osc.stop(time + 0.1);
+            }
+            
+            // Gerilim için yüksek ses
+            const tensionOsc = audioCtx.createOscillator();
+            const tensionGain = audioCtx.createGain();
+            tensionOsc.connect(tensionGain);
+            tensionGain.connect(audioCtx.destination);
+            
+            tensionOsc.type = 'sawtooth';
+            tensionOsc.frequency.setValueAtTime(200, now);
+            tensionOsc.frequency.linearRampToValueAtTime(400, now + 1);
+            
+            tensionGain.gain.setValueAtTime(0.1, now);
+            tensionGain.gain.linearRampToValueAtTime(0.2, now + 0.8);
+            tensionGain.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+            
+            tensionOsc.start(now);
+            tensionOsc.stop(now + 1.2);
+        }
+
+        // İYİLEŞTİRİLMİŞ: Gerçekçi sevinç/alkış efekti
+        function playCelebration() {
+            const now = audioCtx.currentTime;
+            
+            // Kalabalık alkışı - noise
+            const bufferSize = audioCtx.sampleRate * 3;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 800;            filter.Q.value = 1;
+            
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.5, now + 0.5);
+            gain.gain.setValueAtTime(0.5, now + 1.5);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 3);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start(now);
+            
+            // Sevinç çığlıkları (yüksek notalar)
+            for (let i = 0; i < 5; i++) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600 + Math.random() * 400, now + i * 0.3);
+                osc.frequency.exponentialRampToValueAtTime(800 + Math.random() * 400, now + i * 0.3 + 0.2);
+                
+                gain.gain.setValueAtTime(0, now + i * 0.3);
+                gain.gain.linearRampToValueAtTime(0.2, now + i * 0.3 + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.3 + 0.3);
+                
+                osc.start(now + i * 0.3);
+                osc.stop(now + i * 0.3 + 0.3);
+            }
+        }
+
+        // İYİLEŞTİRİLMİŞ: Üzülme/şaşırma efekti ("Aaaa" sesi)
+        function playDisappointment() {
+            const now = audioCtx.currentTime;
+            
+            // "Aaaa" çığlık efekti
+            for (let i = 0; i < 3; i++) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(400, now + i * 0.4);
+                osc.frequency.exponentialRampToValueAtTime(250, now + i * 0.4 + 0.3);
+                
+                gain.gain.setValueAtTime(0, now + i * 0.4);
+                gain.gain.linearRampToValueAtTime(0.3, now + i * 0.4 + 0.1);                gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.4 + 0.3);
+                
+                osc.start(now + i * 0.4);
+                osc.stop(now + i * 0.4 + 0.3);
+            }
+            
+            // Dramatik bas ses
+            const bassOsc = audioCtx.createOscillator();
+            const bassGain = audioCtx.createGain();
+            bassOsc.connect(bassGain);
+            bassGain.connect(audioCtx.destination);
+            
+            bassOsc.type = 'square';
+            bassOsc.frequency.setValueAtTime(100, now);
+            bassOsc.frequency.exponentialRampToValueAtTime(50, now + 0.5);
+            
+            bassGain.gain.setValueAtTime(0.3, now);
+            bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            
+            bassOsc.start(now);
+            bassOsc.stop(now + 0.5);
+        }
+
+        class Firework {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.particles = [];
+                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ffffff'];
+                
+                for (let i = 0; i < 50; i++) {
+                    const angle = (Math.PI * 2 * i) / 50;
+                    const velocity = 3 + Math.random() * 3;
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * velocity,
+                        vy: Math.sin(angle) * velocity,
+                        life: 1,
+                        color: colors[Math.floor(Math.random() * colors.length)]
+                    });
+                }
+            }
+
+            update() {
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.05;
+                    p.life -= 0.02;                });
+                this.particles = this.particles.filter(p => p.life > 0);
+            }
+
+            draw(ctx) {
+                this.particles.forEach(p => {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+        }
+
+        let fireworks = [];
+        let fireworksActive = false;
+
+        function startFireworks() {
+            fireworksActive = true;
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            function animate() {
+                if (!fireworksActive) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    return;
+                }
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                if (Math.random() < 0.05) {
+                    fireworks.push(new Firework(
+                        Math.random() * canvas.width,
+                        Math.random() * canvas.height * 0.6
+                    ));
+                }
+
+                fireworks.forEach(fw => {
+                    fw.update();
+                    fw.draw(ctx);
+                });
+
+                fireworks = fireworks.filter(fw => fw.particles.length > 0);
+                requestAnimationFrame(animate);
+            }
+            animate();
+            
+            setTimeout(() => {
+                fireworksActive = false;
+            }, 5000);
+        }
+
+        function initGame() {
+            playerBox = null;
+            openedBoxes = [];
+            currentStage = 0;
+            openedInCurrentStage = 0;
+            gameActive = true;
+            currentOffer = 0;
+            lastOffer = 0;
+            boxContents = {};
+            startMessageClosed = false;
+
+            let shuffledPrizes = [...prizes].sort(() => Math.random() - 0.5);
+
+            for (let i = 1; i <= 22; i++) {
+                boxContents[i] = shuffledPrizes[i - 1];
+            }
+
+            renderPrizeTrees();
+            renderBoxes();
+            
+            document.getElementById('start-message').classList.remove('hide');
+            document.getElementById('result-modal').classList.remove('show');
+            document.getElementById('banker-modal').classList.remove('show');
+            document.getElementById('stage-info').textContent = 'Kendi kutunuzu seçin!';
+            document.getElementById('last-offer').textContent = '0 TL';
+            document.getElementById('player-box-num').textContent = '?';
+            document.getElementById('boxes-remaining').textContent = '22';
+        }
+
+        // DÜZELTME: Başlangıç mesajını kapat
+        function closeStartMessage() {
+            if (!startMessageClosed) {
+                document.getElementById('start-message').classList.add('hide');
+                startMessageClosed = true;
+            }
+        }
+
+        function renderPrizeTrees() {
+            const leftTree = document.getElementById('prize-tree-left');
+            const rightTree = document.getElementById('prize-tree-right');
+            leftTree.innerHTML = '';
+            rightTree.innerHTML = '';
+            const sortedPrizes = [...prizes].sort((a, b) => a - b);
+            
+            sortedPrizes.forEach(prize => {
+                const div = document.createElement('div');
+                div.className = `prize-item ${getPrizeColor(prize)}`;
+                div.id = `prize-${prize}`;
+                div.textContent = formatMoney(prize);
+                
+                if (prize <= 10000) {
+                    leftTree.appendChild(div);
+                } else {
+                    rightTree.appendChild(div);
+                }
+            });
+        }
+
+        function renderBoxes() {
+            const grid = document.getElementById('boxes-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 1; i <= 22; i++) {
+                const box = document.createElement('div');
+                box.className = 'game-box';
+                box.id = `box-${i}`;
+                box.innerHTML = `
+                    <div class="box-number">${i}</div>
+                    <div class="box-avatar">${avatars[i-1]}</div>
+                `;
+                box.onclick = () => handleBoxClick(i);
+                grid.appendChild(box);
+            }
+        }
+
+        function getPrizeColor(amount) {
+            if (amount <= 10000) return 'blue';
+            if (amount <= 500000) return 'yellow';
+            return 'red';
+        }
+
+        function formatMoney(amount) {
+            return amount.toLocaleString('tr-TR') + ' TL';
+        }
+
+        function handleBoxClick(boxNum) {
+            // DÜZELTME: İlk kutu seçiminde mesajı otomatik kapat
+            if (!startMessageClosed) {
+                closeStartMessage();
+            }
+
+            if (!gameActive) return;            if (openedBoxes.includes(boxNum)) return;
+
+            if (playerBox === null) {
+                playerBox = boxNum;
+                document.getElementById(`box-${boxNum}`).classList.add('player-box');
+                document.getElementById('player-box-num').textContent = boxNum;
+                document.getElementById('stage-info').textContent = `1. Etap: ${stages[0]} kutu açın`;
+                return;
+            }
+
+            if (boxNum === playerBox) {
+                alert("Kendi kutunuzu açamazsınız! Oyun sonunda açılacak.");
+                return;
+            }
+
+            openBoxWithAnimation(boxNum);
+        }
+
+        function openBoxWithAnimation(boxNum) {
+            const prize = boxContents[boxNum];
+            const modal = document.getElementById('box-modal');
+            const openingBox = document.getElementById('opening-box');
+            const modalBoxNum = document.getElementById('modal-box-num');
+            const revealedPrize = document.getElementById('revealed-prize');
+
+            modalBoxNum.textContent = boxNum;
+            revealedPrize.classList.remove('show');
+            revealedPrize.textContent = formatMoney(prize);
+            revealedPrize.style.color = getPrizeColorClass(prize);
+            
+            modal.classList.add('show');
+            openingBox.classList.add('opening');
+            
+            playDramSound();
+
+            setTimeout(() => {
+                revealedPrize.classList.add('show');
+                
+                setTimeout(() => {
+                    if (prize <= 10000) {
+                        playCelebration(); // Küçük ödül - sevinç
+                    } else {
+                        playDisappointment(); // Büyük ödül - üzüntü
+                    }
+                }, 500);
+
+                setTimeout(() => {
+                    modal.classList.remove('show');
+                    openingBox.classList.remove('opening');
+                                        openedBoxes.push(boxNum);
+                    openedInCurrentStage++;
+                    
+                    const boxEl = document.getElementById(`box-${boxNum}`);
+                    boxEl.classList.add('disabled');
+                    boxEl.innerHTML = `<div style="font-size: 0.9rem; color: var(--gold);">${formatMoney(prize)}</div>`;
+                    
+                    document.getElementById(`prize-${prize}`).classList.add('opened');
+                    document.getElementById('boxes-remaining').textContent = 22 - openedBoxes.length;
+
+                    if (openedInCurrentStage >= stages[currentStage]) {
+                        gameActive = false;
+                        setTimeout(() => showBankerOffer(), 1000);
+                    } else {
+                        const remaining = stages[currentStage] - openedInCurrentStage;
+                        document.getElementById('stage-info').textContent = 
+                            `${currentStage + 1}. Etap: ${remaining} kutu daha açın`;
+                    }
+                }, 2000);
+            }, 1000);
+        }
+
+        function getPrizeColorClass(prize) {
+            if (prize <= 10000) return '#2196f3';
+            if (prize <= 500000) return '#ffc107';
+            return '#f44336';
+        }
+
+        function showBankerOffer() {
+            const remainingPrizes = prizes.filter(p => {
+                const isOpened = openedBoxes.some(b => boxContents[b] === p);
+                const isPlayerBox = boxContents[playerBox] === p;
+                return !isOpened || isPlayerBox;
+            });
+
+            const sum = remainingPrizes.reduce((a, b) => a + b, 0);
+            const ev = sum / remainingPrizes.length;
+            
+            const riskMultipliers = [0.65, 0.75, 0.80, 0.85, 0.90, 0.95, 1.0];
+            let multiplier = riskMultipliers[currentStage];
+            const randomFactor = 0.95 + (Math.random() * 0.1);
+            
+            currentOffer = Math.round(ev * multiplier * randomFactor);
+            currentOffer = Math.max(currentOffer, Math.min(...remainingPrizes));
+
+            playPhoneRing();
+
+            setTimeout(() => {
+                document.getElementById('banker-offer').textContent = formatMoney(currentOffer);
+                document.getElementById('banker-modal').classList.add('show');            }, 1500);
+        }
+
+        function acceptOffer() {
+            document.getElementById('banker-modal').classList.remove('show');
+            showResult(true);
+        }
+
+        function rejectOffer() {
+            document.getElementById('banker-modal').classList.remove('show');
+            lastOffer = currentOffer;
+            document.getElementById('last-offer').textContent = formatMoney(lastOffer);
+            
+            currentStage++;
+            openedInCurrentStage = 0;
+
+            if (currentStage >= stages.length) {
+                setTimeout(() => {
+                    openOwnBox();
+                }, 500);
+            } else {
+                gameActive = true;
+                document.getElementById('stage-info').textContent = 
+                    `${currentStage + 1}. Etap: ${stages[currentStage]} kutu açın`;
+            }
+        }
+
+        function openOwnBox() {
+            const prize = boxContents[playerBox];
+            openBoxWithAnimation(playerBox);
+            
+            setTimeout(() => {
+                showResult(false);
+            }, 3000);
+        }
+
+        function showResult(acceptedOffer) {
+            const playerPrize = boxContents[playerBox];
+            const finalAmount = acceptedOffer ? currentOffer : playerPrize;
+            const modal = document.getElementById('result-modal');
+            const title = document.getElementById('result-title');
+            const message = document.getElementById('result-message');
+            const amount = document.getElementById('result-amount');
+
+            modal.classList.add('show');
+            amount.textContent = formatMoney(finalAmount);
+
+            if (acceptedOffer) {
+                title.textContent = playerPrize <= finalAmount ? '🎉 TEBRİKLER!' : '😔 SONUÇ';
+                message.innerHTML = `Banker teklifini kabul ettiniz.<br>Kutunuzda: ${formatMoney(playerPrize)} vardı.`;                amount.style.color = finalAmount >= playerPrize ? '#4caf50' : '#ff9800';
+                
+                if (finalAmount >= playerPrize) {
+                    startFireworks();
+                }
+            } else {
+                if (playerPrize >= 100000) {
+                    title.textContent = '🎆 MUHTEŞEM!';
+                    message.innerHTML = `Kutunuzdan büyük ödül çıktı!<br>Harika bir oyun çıkardınız!`;
+                    amount.style.color = '#4caf50';
+                    startFireworks();
+                } else if (playerPrize >= 10000) {
+                    title.textContent = '😐 SONUÇ';
+                    message.innerHTML = `Kutunuzdan orta seviye ödül çıktı.<br>${formatMoney(playerPrize)} kazandınız.`;
+                    amount.style.color = '#ffc107';
+                } else {
+                    title.textContent = '😢 ÜZÜCÜ';
+                    message.innerHTML = `Kutunuzdan küçük ödül çıktı.<br>Banker teklifini (${formatMoney(currentOffer)}) reddetmiştiniz.`;
+                    amount.style.color = '#f44336';
+                    playDisappointment();
+                }
+            }
+
+            for (let i = 1; i <= 22; i++) {
+                if (!openedBoxes.includes(i)) {
+                    const boxEl = document.getElementById(`box-${i}`);
+                    boxEl.innerHTML = `<div style="font-size: 0.8rem; color: var(--gold);">${formatMoney(boxContents[i])}</div>`;
+                }
+            }
+        }
+
+        function checkOrientation() {
+            const warning = document.getElementById('orientation-warning');
+            if (window.innerWidth < window.innerHeight) {
+                warning.classList.add('show');
+            } else {
+                warning.classList.remove('show');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            checkOrientation();
+            initGame();
+        });
+        
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (event) => {            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
