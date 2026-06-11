@@ -6,7 +6,7 @@
     <title>Var Mısın Yok Musun</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-        
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -31,8 +31,55 @@
             position: fixed;
             width: 100vw;
             height: 100vh;
+            margin: 0;
         }
 
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s;        }
+
+        #splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #splash-image {
+            width: 80%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        #progress-container {
+            width: 80%;
+            max-width: 300px;
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), #ff8f00);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* Orientation Warning */
         .orientation-warning {
             display: none;
             position: fixed;
@@ -41,26 +88,26 @@
             width: 100%;
             height: 100%;
             background: #000;
-            z-index: 10000;
+            z-index: 9000;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 20px;
         }
+
         .orientation-warning.show {
-            display: flex;
-        }
+            display: flex;        }
 
         @media screen and (orientation: portrait) {
-            .orientation-warning.show {
-                display: flex;
-            }
+            .orientation-warning.show { display: flex; }
         }
 
+        /* Game Wrapper - Scrollable */
         .game-wrapper {
             display: flex;
             height: 100vh;
             width: 100vw;
+            overflow: hidden;
         }
 
         .prize-tree-left {
@@ -96,8 +143,8 @@
         .prize-item.red { 
             background: linear-gradient(90deg, var(--red-prize), #ef5350); 
             color: #fff;
-            box-shadow: 0 2px 5px rgba(244, 67, 54, 0.4);        }
-
+            box-shadow: 0 2px 5px rgba(244, 67, 54, 0.4);
+        }
         .prize-item.opened {
             opacity: 0.15;
             filter: grayscale(100%);
@@ -110,6 +157,7 @@
             flex-direction: column;
             padding: 15px;
             position: relative;
+            overflow: hidden;
         }
 
         .header {
@@ -138,14 +186,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: auto;
+            padding: 10px;
         }
 
         .boxes-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 12px;
-            max-width: 900px;
-            width: 100%;        }
+            max-width: 900px;            width: 100%;
+            min-height: 100%;
+        }
 
         .game-box {
             aspect-ratio: 4/3;
@@ -160,6 +211,7 @@
             transition: all 0.3s;
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            min-width: 70px;
         }
 
         .game-box:hover {
@@ -191,10 +243,10 @@
 
         .box-number {
             font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--gold);
+            font-weight: 900;            color: var(--gold);
             margin-bottom: 5px;
         }
+
         .box-avatar {
             font-size: 2rem;
         }
@@ -240,9 +292,9 @@
             display: flex;
             flex-direction: column;
             gap: 3px;
-            overflow-y: auto;
-            border-left: 2px solid var(--gold);
+            overflow-y: auto;            border-left: 2px solid var(--gold);
         }
+
         .box-modal {
             display: none;
             position: fixed;
@@ -289,10 +341,10 @@
         }
 
         .opening-box.opening {
-            animation: boxOpen 1s forwards;
-        }
+            animation: boxOpen 1s forwards;        }
 
-        @keyframes boxOpen {            0% { transform: scale(1); }
+        @keyframes boxOpen {
+            0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
@@ -324,7 +376,7 @@
             100% { transform: scale(1); }
         }
 
-        .-modal {
+        .banker-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -337,11 +389,11 @@
             align-items: center;
         }
 
-        .-modal.show {
-            display: flex;
-            animation: fadeIn 0.5s;
+        .banker-modal.show {
+            display: flex;            animation: fadeIn 0.5s;
         }
-        .-content {
+
+        .banker-content {
             background: linear-gradient(135deg, #1a237e, #0d1442);
             border: 4px solid var(--gold);
             border-radius: 30px;
@@ -357,13 +409,13 @@
             50% { transform: scale(1.05); }
         }
 
-        .-title {
+        .banker-title {
             font-size: 2rem;
             color: var(--gold);
             margin-bottom: 20px;
         }
 
-        .-offer {
+        .banker-offer {
             font-size: 3.5rem;
             font-weight: 900;
             color: #4caf50;
@@ -371,7 +423,7 @@
             text-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
         }
 
-        .-buttons {
+        .banker-buttons {
             display: flex;
             gap: 20px;
             justify-content: center;
@@ -388,9 +440,9 @@
             transition: all 0.3s;
             text-transform: uppercase;
         }
-
         .btn-yes {
-            background: linear-gradient(135deg, #4caf50, #45a049);            color: white;
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
             box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
 
@@ -436,10 +488,10 @@
             margin-bottom: 20px;
         }
 
-        .result-amount {
-            font-size: 4rem;
+        .result-amount {            font-size: 4rem;
             font-weight: 900;
-            color: var(--gold);            margin: 30px 0;
+            color: var(--gold);
+            margin: 30px 0;
             text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
         }
 
@@ -463,38 +515,30 @@
             text-align: center;
             z-index: 4000;
             cursor: pointer;
-            animation: startMessagePulse 2s infinite;
-        }
-
-        @keyframes startMessagePulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
-        }
-
-        .start-message h2 {
-            color: var(--gold);
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        .start-message.hide {
             display: none;
         }
 
-        @media screen and (max-height: 700px) {
-            .boxes-grid { gap: 8px; }
-            .game-box { aspect-ratio: 4/3; }
+        @media screen and (max-width: 480px) {
+            .game-box {
+                min-width: 60px;
+                padding: 5px;
+            }
             .box-number { font-size: 1.2rem; }
             .box-avatar { font-size: 1.5rem; }
-        }
-
-        @media screen and (max-width: 1200px) {            .prize-tree-left, .prize-tree-right { width: 10%; font-size: 0.7rem; }
-            .boxes-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+            .prize-tree-left, .prize-tree-right { width: 10%; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img id="splash-image" src="https://github.com/oozata/ozata/blob/main/splach.png?=true" alt="Splash">
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+    <!-- Orientation Warning -->
     <div class="orientation-warning" id="orientation-warning">
         <div>
             <h2 style="color: var(--gold); margin-bottom: 20px;">📱 Lütfen Telefonunuzu Yatay Tutun</h2>
@@ -502,8 +546,10 @@
         </div>
     </div>
 
+    <!-- Fireworks Canvas -->
     <canvas id="fireworks-canvas"></canvas>
 
+    <!-- Game -->
     <div class="game-wrapper">
         <div class="prize-tree-left" id="prize-tree-left"></div>
 
@@ -536,19 +582,20 @@
         <div class="prize-tree-right" id="prize-tree-right"></div>
     </div>
 
+    <!-- Modals -->
     <div class="box-modal" id="box-modal">
-        <div class="opening-box" id="opening-box">            <div class="box-number" id="modal-box-num">1</div>
-            <div class="box-avatar">📦</div>
-            <div class="revealed-prize" id="revealed-prize">0 TL</div>
+        <div class="opening-box" id="opening-box">
+            <div class="box-number" id="modal-box-num">1</div>
+            <div class="box-avatar">📦</div>            <div class="revealed-prize" id="revealed-prize">0 TL</div>
         </div>
     </div>
 
-    <div class="-modal" id="-modal">
-        <div class="-content">
-            <div class="-title">📞 BANKA ARIYOR!</div>
+    <div class="banker-modal" id="banker-modal">
+        <div class="banker-content">
+            <div class="banker-title">📞 BANKER ARIYOR!</div>
             <div style="font-size: 1.2rem; margin-bottom: 10px;">Size bir teklif sunuyor:</div>
-            <div class="-offer" id="-offer">0 TL</div>
-            <div class="-buttons">
+            <div class="banker-offer" id="banker-offer">0 TL</div>
+            <div class="banker-buttons">
                 <button class="btn btn-yes" onclick="acceptOffer()">VARIM!</button>
                 <button class="btn btn-no" onclick="rejectOffer()">YOKUM!</button>
             </div>
@@ -564,20 +611,48 @@
         </div>
     </div>
 
-    <div class="start-message" id="start-message" onclick="closeStartMessage()">
-        <h2>Hoş Geldiniz!</h2>
-        <p style="font-size: 1.2rem; margin-bottom: 20px;">1-22 arası bir kutu seçerek başlayın</p>
-        <p style="color: #aaa; font-size: 0.9rem;">(Başlamak için bir kutuya tıklayın)</p>
-    </div>
-
     <script>
+        // === SPLASH SCREEN ===
+        const splashScreen = document.getElementById('splash-screen');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+
+        // Resmi yükleme kontrolü
+        const splashImg = document.getElementById('splash-image');
+        splashImg.onload = () => {
+            // Başlangıçta %0
+            let progress = 0;
+            const duration = 4000; // 4 saniye
+            const interval = 100; // her 100ms artacak
+
+            const timer = setInterval(() => {
+                progress += (interval / duration) * 100;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(timer);
+                    
+                    // Animasyonla gizle
+                    splashScreen.classList.add('hidden');
+                    
+                    // Oyunu başlat
+                    setTimeout(initGame, 500);                }
+                progressBar.style.width = `${progress}%`;
+            }, interval);
+        };
+
+        splashImg.onerror = () => {
+            console.warn("Splash resmi yüklenemedi, doğrudan oyun başlıyor...");
+            setTimeout(initGame, 1000);
+        };
+
+        // === GAME VARIABLES ===
         const prizes = [
             1, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000,
             25000, 50000, 100000, 250000, 500000,
             750000, 1000000, 2000000, 3000000, 5000000, 5000000
         ];
 
-        const avatars = ['😀','😎','🤠','😢','🤔','😋','😉','😍','🥰','🥳','🥹','😺','🫪','🦹','😎','🤑','👸','🤥','😇','🤖','🥴','👻'];
+        const avatars = ['😀','😎','🤠','😭','🤔','😋','😍','🥰','😘','🥳','🤪','😎','🤠','😜','🤗','🤩','😇','🤯','🤓','🧐','🤡','👻'];
         
         let boxContents = {};
         let playerBox = null;
@@ -586,106 +661,95 @@
         const stages = [4, 3, 3, 3, 3, 2, 2];
         let openedInCurrentStage = 0;
         let gameActive = false;
-        let currentOffer = 0;        let lastOffer = 0;
-        let startMessageClosed = false;
+        let currentOffer = 0;
+        let lastOffer = 0;
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
+        let audioCtx = null;
 
-        // İYİLEŞTİRİLMİŞ: Eski tip telefon zili sesi
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        // === SOUNDS ===
         function playPhoneRing() {
+            if (!audioCtx) initAudio();
             const now = audioCtx.currentTime;
             
-            // İlk zil
-            playRingCycle(now);
-            // İkinci zil
-            playRingCycle(now + 0.8);
-            // Üçüncü zil
-            playRingCycle(now + 1.6);
+            for (let i = 0; i < 3; i++) {
+                const time = now + i * 0.8;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, time);
+                osc.frequency.setValueAtTime(480, time + 0.1);
+                
+                gain.gain.setValueAtTime(0, time);
+                gain.gain.linearRampToValueAtTime(0.4, time + 0.05);
+                gain.gain.setValueAtTime(0.4, time + 0.2);
+                gain.gain.linearRampToValueAtTime(0, time + 0.3);
+                
+                osc.start(time);
+                osc.stop(time + 0.35);
+            }
         }
 
-        function playRingCycle(startTime) {
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            // Klasik telefon zili frekansı (440 Hz ve 480 Hz karışımı)
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(440, startTime);
-            osc.frequency.setValueAtTime(480, startTime + 0.1);
-            
-            gainNode.gain.setValueAtTime(0, startTime);
-            gainNode.gain.linearRampToValueAtTime(0.4, startTime + 0.05);
-            gainNode.gain.setValueAtTime(0.4, startTime + 0.2);
-            gainNode.gain.linearRampToValueAtTime(0, startTime + 0.3);
-            
-            osc.start(startTime);
-            osc.stop(startTime + 0.35);
-        }
-
-        // İYİLEŞTİRİLMİŞ: Gerçekçi dram/gerilim müziği
         function playDramSound() {
+            if (!audioCtx) initAudio();
             const now = audioCtx.currentTime;
             
             // Bas davul vuruşları
             for (let i = 0; i < 8; i++) {
                 const time = now + i * 0.15;
-                
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                osc.connect(gain);                gain.connect(audioCtx.destination);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
                 
                 osc.frequency.setValueAtTime(80, time);
                 osc.frequency.exponentialRampToValueAtTime(40, time + 0.1);
                 osc.type = 'square';
-                
                 gain.gain.setValueAtTime(0.3, time);
                 gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
-                
                 osc.start(time);
                 osc.stop(time + 0.1);
             }
             
-            // Gerilim için yüksek ses
-            const tensionOsc = audioCtx.createOscillator();
-            const tensionGain = audioCtx.createGain();
-            tensionOsc.connect(tensionGain);
-            tensionGain.connect(audioCtx.destination);
-            
-            tensionOsc.type = 'sawtooth';
-            tensionOsc.frequency.setValueAtTime(200, now);
-            tensionOsc.frequency.linearRampToValueAtTime(400, now + 1);
-            
-            tensionGain.gain.setValueAtTime(0.1, now);
-            tensionGain.gain.linearRampToValueAtTime(0.2, now + 0.8);
-            tensionGain.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
-            
-            tensionOsc.start(now);
-            tensionOsc.stop(now + 1.2);
+            // Gerilim
+            const tension = audioCtx.createOscillator();
+            const tg = audioCtx.createGain();
+            tension.connect(tg);
+            tg.connect(audioCtx.destination);
+            tension.type = 'sawtooth';
+            tension.frequency.setValueAtTime(200, now);
+            tension.frequency.linearRampToValueAtTime(400, now + 1);
+            tg.gain.setValueAtTime(0.1, now);
+            tg.gain.linearRampToValueAtTime(0.2, now + 0.8);
+            tg.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+            tension.start(now);
+            tension.stop(now + 1.2);
         }
-
-        // İYİLEŞTİRİLMİŞ: Gerçekçi sevinç/alkış efekti
         function playCelebration() {
+            if (!audioCtx) initAudio();
             const now = audioCtx.currentTime;
             
-            // Kalabalık alkışı - noise
-            const bufferSize = audioCtx.sampleRate * 3;
+            // Alkış (noise)
+            const bufferSize = audioCtx.sampleRate;
             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const data = buffer.getChannelData(0);
-            
             for (let i = 0; i < bufferSize; i++) {
                 data[i] = Math.random() * 2 - 1;
             }
             
             const noise = audioCtx.createBufferSource();
             noise.buffer = buffer;
-            
             const filter = audioCtx.createBiquadFilter();
             filter.type = 'bandpass';
-            filter.frequency.value = 800;            filter.Q.value = 1;
-            
+            filter.frequency.value = 800;
             const gain = audioCtx.createGain();
             gain.gain.setValueAtTime(0, now);
             gain.gain.linearRampToValueAtTime(0.5, now + 0.5);
@@ -697,65 +761,57 @@
             gain.connect(audioCtx.destination);
             noise.start(now);
             
-            // Sevinç çığlıkları (yüksek notalar)
-            for (let i = 0; i < 5; i++) {
+            // Sevinç çığlıkları
+            for (let i = 0; i < 4; i++) {
                 const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
+                const g = audioCtx.createGain();
+                osc.connect(g);
+                g.connect(audioCtx.destination);
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600 + Math.random() * 400, now + i * 0.3);
                 osc.frequency.exponentialRampToValueAtTime(800 + Math.random() * 400, now + i * 0.3 + 0.2);
-                
-                gain.gain.setValueAtTime(0, now + i * 0.3);
-                gain.gain.linearRampToValueAtTime(0.2, now + i * 0.3 + 0.1);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.3 + 0.3);
-                
+                g.gain.setValueAtTime(0, now + i * 0.3);
+                g.gain.linearRampToValueAtTime(0.2, now + i * 0.3 + 0.1);
+                g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.3 + 0.3);
                 osc.start(now + i * 0.3);
                 osc.stop(now + i * 0.3 + 0.3);
             }
         }
 
-        // İYİLEŞTİRİLMİŞ: Üzülme/şaşırma efekti ("Aaaa" sesi)
         function playDisappointment() {
+            if (!audioCtx) initAudio();
             const now = audioCtx.currentTime;
             
-            // "Aaaa" çığlık efekti
-            for (let i = 0; i < 3; i++) {
+            // "Aaaa" çığlık            for (let i = 0; i < 3; i++) {
                 const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
+                const g = audioCtx.createGain();
+                osc.connect(g);
+                g.connect(audioCtx.destination);
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(400, now + i * 0.4);
                 osc.frequency.exponentialRampToValueAtTime(250, now + i * 0.4 + 0.3);
-                
-                gain.gain.setValueAtTime(0, now + i * 0.4);
-                gain.gain.linearRampToValueAtTime(0.3, now + i * 0.4 + 0.1);                gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.4 + 0.3);
-                
+                g.gain.setValueAtTime(0, now + i * 0.4);
+                g.gain.linearRampToValueAtTime(0.3, now + i * 0.4 + 0.1);
+                g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.4 + 0.3);
                 osc.start(now + i * 0.4);
                 osc.stop(now + i * 0.4 + 0.3);
             }
             
-            // Dramatik bas ses
-            const bassOsc = audioCtx.createOscillator();
-            const bassGain = audioCtx.createGain();
-            bassOsc.connect(bassGain);
-            bassGain.connect(audioCtx.destination);
-            
-            bassOsc.type = 'square';
-            bassOsc.frequency.setValueAtTime(100, now);
-            bassOsc.frequency.exponentialRampToValueAtTime(50, now + 0.5);
-            
-            bassGain.gain.setValueAtTime(0.3, now);
-            bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-            
-            bassOsc.start(now);
-            bassOsc.stop(now + 0.5);
+            // Dramatik bas
+            const bass = audioCtx.createOscillator();
+            const bg = audioCtx.createGain();
+            bass.connect(bg);
+            bg.connect(audioCtx.destination);
+            bass.type = 'square';
+            bass.frequency.setValueAtTime(100, now);
+            bass.frequency.exponentialRampToValueAtTime(50, now + 0.5);
+            bg.gain.setValueAtTime(0.3, now);
+            bg.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            bass.start(now);
+            bass.stop(now + 0.5);
         }
 
+        // === FIREWORKS ===
         class Firework {
             constructor(x, y) {
                 this.x = x;
@@ -776,17 +832,17 @@
                     });
                 }
             }
-
             update() {
                 this.particles.forEach(p => {
                     p.x += p.vx;
                     p.y += p.vy;
                     p.vy += 0.05;
-                    p.life -= 0.02;                });
+                    p.life -= 0.02;
+                });
                 this.particles = this.particles.filter(p => p.life > 0);
             }
 
-            draw(ctx) {
+            d(ctx) {
                 this.particles.forEach(p => {
                     ctx.globalAlpha = p.life;
                     ctx.fillStyle = p.color;
@@ -824,13 +880,13 @@
                 }
 
                 fireworks.forEach(fw => {
-                    fw.update();
-                    fw.draw(ctx);
+                    fw.update();                    fw.d(ctx);
                 });
 
                 fireworks = fireworks.filter(fw => fw.particles.length > 0);
                 requestAnimationFrame(animate);
             }
+
             animate();
             
             setTimeout(() => {
@@ -838,6 +894,7 @@
             }, 5000);
         }
 
+        // === GAME LOGIC ===
         function initGame() {
             playerBox = null;
             openedBoxes = [];
@@ -847,7 +904,6 @@
             currentOffer = 0;
             lastOffer = 0;
             boxContents = {};
-            startMessageClosed = false;
 
             let shuffledPrizes = [...prizes].sort(() => Math.random() - 0.5);
 
@@ -858,21 +914,10 @@
             renderPrizeTrees();
             renderBoxes();
             
-            document.getElementById('start-message').classList.remove('hide');
-            document.getElementById('result-modal').classList.remove('show');
-            document.getElementById('-modal').classList.remove('show');
             document.getElementById('stage-info').textContent = 'Kendi kutunuzu seçin!';
             document.getElementById('last-offer').textContent = '0 TL';
             document.getElementById('player-box-num').textContent = '?';
             document.getElementById('boxes-remaining').textContent = '22';
-        }
-
-        // DÜZELTME: Başlangıç mesajını kapat
-        function closeStartMessage() {
-            if (!startMessageClosed) {
-                document.getElementById('start-message').classList.add('hide');
-                startMessageClosed = true;
-            }
         }
 
         function renderPrizeTrees() {
@@ -880,11 +925,11 @@
             const rightTree = document.getElementById('prize-tree-right');
             leftTree.innerHTML = '';
             rightTree.innerHTML = '';
+
             const sortedPrizes = [...prizes].sort((a, b) => a - b);
             
             sortedPrizes.forEach(prize => {
-                const div = document.createElement('div');
-                div.className = `prize-item ${getPrizeColor(prize)}`;
+                const div = document.createElement('div');                div.className = `prize-item ${getPrizeColor(prize)}`;
                 div.id = `prize-${prize}`;
                 div.textContent = formatMoney(prize);
                 
@@ -924,16 +969,16 @@
         }
 
         function handleBoxClick(boxNum) {
-            // DÜZELTME: İlk kutu seçiminde mesajı otomatik kapat
-            if (!startMessageClosed) {
-                closeStartMessage();
+            if (!gameActive) return;
+            if (openedBoxes.includes(boxNum)) return;
+
+            // İlk seçimde splash mesajını kapatmış olmalı, ama emin olalım
+            if (document.getElementById('splash-screen').classList.contains('hidden')) {
+                // Normal akış
             }
 
-            if (!gameActive) return;            if (openedBoxes.includes(boxNum)) return;
-
             if (playerBox === null) {
-                playerBox = boxNum;
-                document.getElementById(`box-${boxNum}`).classList.add('player-box');
+                playerBox = boxNum;                document.getElementById(`box-${boxNum}`).classList.add('player-box');
                 document.getElementById('player-box-num').textContent = boxNum;
                 document.getElementById('stage-info').textContent = `1. Etap: ${stages[0]} kutu açın`;
                 return;
@@ -969,20 +1014,20 @@
                 
                 setTimeout(() => {
                     if (prize <= 10000) {
-                        playCelebration(); // Küçük ödül - sevinç
+                        playCelebration();
                     } else {
-                        playDisappointment(); // Büyük ödül - üzüntü
+                        playDisappointment();
                     }
                 }, 500);
 
                 setTimeout(() => {
                     modal.classList.remove('show');
                     openingBox.classList.remove('opening');
-                                        openedBoxes.push(boxNum);
+                    
+                    openedBoxes.push(boxNum);
                     openedInCurrentStage++;
                     
-                    const boxEl = document.getElementById(`box-${boxNum}`);
-                    boxEl.classList.add('disabled');
+                    const boxEl = document.getElementById(`box-${boxNum}`);                    boxEl.classList.add('disabled');
                     boxEl.innerHTML = `<div style="font-size: 0.9rem; color: var(--gold);">${formatMoney(prize)}</div>`;
                     
                     document.getElementById(`prize-${prize}`).classList.add('opened');
@@ -1026,17 +1071,17 @@
             playPhoneRing();
 
             setTimeout(() => {
-                document.getElementById('-offer').textContent = formatMoney(currentOffer);
-                document.getElementById('-modal').classList.add('show');            }, 1500);
+                document.getElementById('banker-offer').textContent = formatMoney(currentOffer);
+                document.getElementById('banker-modal').classList.add('show');
+            }, 1500);
         }
 
-        function acceptOffer() {
-            document.getElementById('-modal').classList.remove('show');
+        function acceptOffer() {            document.getElementById('banker-modal').classList.remove('show');
             showResult(true);
         }
 
         function rejectOffer() {
-            document.getElementById('-modal').classList.remove('show');
+            document.getElementById('banker-modal').classList.remove('show');
             lastOffer = currentOffer;
             document.getElementById('last-offer').textContent = formatMoney(lastOffer);
             
@@ -1076,11 +1121,11 @@
 
             if (acceptedOffer) {
                 title.textContent = playerPrize <= finalAmount ? '🎉 TEBRİKLER!' : '😔 SONUÇ';
-                message.innerHTML = `Banka teklifini kabul ettiniz.<br>Kutunuzda: ${formatMoney(playerPrize)} vardı.`;                amount.style.color = finalAmount >= playerPrize ? '#4caf50' : '#ff9800';
+                message.innerHTML = `Banker teklifini kabul ettiniz.<br>Kutunuzda: ${formatMoney(playerPrize)} vardı.`;
+                amount.style.color = finalAmount >= playerPrize ? '#4caf50' : '#ff9800';
                 
                 if (finalAmount >= playerPrize) {
-                    startFireworks();
-                }
+                    startFireworks();                }
             } else {
                 if (playerPrize >= 100000) {
                     title.textContent = '🎆 MUHTEŞEM!';
@@ -1107,6 +1152,7 @@
             }
         }
 
+        // === ORIENTATION CHECK ===
         function checkOrientation() {
             const warning = document.getElementById('orientation-warning');
             if (window.innerWidth < window.innerHeight) {
@@ -1118,18 +1164,17 @@
 
         window.addEventListener('load', () => {
             checkOrientation();
-            initGame();
         });
         
         window.addEventListener('resize', checkOrientation);
         window.addEventListener('orientationchange', checkOrientation);
 
         let lastTouchEnd = 0;
-        document.addEventListener('touchend', (event) => {            const now = Date.now();
+        document.addEventListener('touchend', (event) => {
+            const now = Date.now();
             if (now - lastTouchEnd <= 300) {
                 event.preventDefault();
-            }
-            lastTouchEnd = now;
+            }            lastTouchEnd = now;
         }, false);
     </script>
 </body>
