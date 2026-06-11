@@ -324,7 +324,7 @@
             100% { transform: scale(1); }
         }
 
-        .banker-modal {
+        .-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -337,11 +337,11 @@
             align-items: center;
         }
 
-        .banker-modal.show {
+        .-modal.show {
             display: flex;
             animation: fadeIn 0.5s;
         }
-        .banker-content {
+        .-content {
             background: linear-gradient(135deg, #1a237e, #0d1442);
             border: 4px solid var(--gold);
             border-radius: 30px;
@@ -357,13 +357,13 @@
             50% { transform: scale(1.05); }
         }
 
-        .banker-title {
+        .-title {
             font-size: 2rem;
             color: var(--gold);
             margin-bottom: 20px;
         }
 
-        .banker-offer {
+        .-offer {
             font-size: 3.5rem;
             font-weight: 900;
             color: #4caf50;
@@ -371,7 +371,7 @@
             text-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
         }
 
-        .banker-buttons {
+        .-buttons {
             display: flex;
             gap: 20px;
             justify-content: center;
@@ -543,12 +543,12 @@
         </div>
     </div>
 
-    <div class="banker-modal" id="banker-modal">
-        <div class="banker-content">
-            <div class="banker-title">📞 BANKER ARIYOR!</div>
+    <div class="-modal" id="-modal">
+        <div class="-content">
+            <div class="-title">📞 BANKA ARIYOR!</div>
             <div style="font-size: 1.2rem; margin-bottom: 10px;">Size bir teklif sunuyor:</div>
-            <div class="banker-offer" id="banker-offer">0 TL</div>
-            <div class="banker-buttons">
+            <div class="-offer" id="-offer">0 TL</div>
+            <div class="-buttons">
                 <button class="btn btn-yes" onclick="acceptOffer()">VARIM!</button>
                 <button class="btn btn-no" onclick="rejectOffer()">YOKUM!</button>
             </div>
@@ -577,7 +577,7 @@
             750000, 1000000, 2000000, 3000000, 5000000, 5000000
         ];
 
-        const avatars = ['😀','😎','🤠','','','😋','','😍','🥰','','','😺','','🦹','','','👸','','','🤖','','👻'];
+        const avatars = ['😀','😎','🤠','😢','🤔','😋','😉','😍','🥰','🥳','🥹','😺','🫪','🦹','😎','🤑','👸','🤥','😇','🤖','🥴','👻'];
         
         let boxContents = {};
         let playerBox = null;
@@ -860,7 +860,7 @@
             
             document.getElementById('start-message').classList.remove('hide');
             document.getElementById('result-modal').classList.remove('show');
-            document.getElementById('banker-modal').classList.remove('show');
+            document.getElementById('-modal').classList.remove('show');
             document.getElementById('stage-info').textContent = 'Kendi kutunuzu seçin!';
             document.getElementById('last-offer').textContent = '0 TL';
             document.getElementById('player-box-num').textContent = '?';
@@ -1026,17 +1026,17 @@
             playPhoneRing();
 
             setTimeout(() => {
-                document.getElementById('banker-offer').textContent = formatMoney(currentOffer);
-                document.getElementById('banker-modal').classList.add('show');            }, 1500);
+                document.getElementById('-offer').textContent = formatMoney(currentOffer);
+                document.getElementById('-modal').classList.add('show');            }, 1500);
         }
 
         function acceptOffer() {
-            document.getElementById('banker-modal').classList.remove('show');
+            document.getElementById('-modal').classList.remove('show');
             showResult(true);
         }
 
         function rejectOffer() {
-            document.getElementById('banker-modal').classList.remove('show');
+            document.getElementById('-modal').classList.remove('show');
             lastOffer = currentOffer;
             document.getElementById('last-offer').textContent = formatMoney(lastOffer);
             
@@ -1076,7 +1076,7 @@
 
             if (acceptedOffer) {
                 title.textContent = playerPrize <= finalAmount ? '🎉 TEBRİKLER!' : '😔 SONUÇ';
-                message.innerHTML = `Banker teklifini kabul ettiniz.<br>Kutunuzda: ${formatMoney(playerPrize)} vardı.`;                amount.style.color = finalAmount >= playerPrize ? '#4caf50' : '#ff9800';
+                message.innerHTML = `Banka teklifini kabul ettiniz.<br>Kutunuzda: ${formatMoney(playerPrize)} vardı.`;                amount.style.color = finalAmount >= playerPrize ? '#4caf50' : '#ff9800';
                 
                 if (finalAmount >= playerPrize) {
                     startFireworks();
