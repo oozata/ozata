@@ -2,7 +2,6 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <!-- ⚠️ DOĞRU LINK: 'splach.png' (harf değiştirilmedi) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Var Mısın Yok Musun</title>
     <style>
@@ -47,8 +46,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10000;            transition: opacity 0.5s;
-        }
+            z-index: 10000;
+            transition: opacity 0.5s;        }
 
         #splash-screen.hidden {
             opacity: 0;
@@ -80,7 +79,7 @@
             transition: width 0.3s ease-in-out;
         }
 
-        /* Game Wrapper - Full landscape layout */
+        /* Game Wrapper - Compact layout */
         .game-wrapper {
             display: flex;
             height: 100vh;
@@ -89,21 +88,22 @@
         }
 
         .prize-tree-left {
-            width: 12%;
+            width: 10%;
+            min-width: 50px;
             background: rgba(0,0,0,0.4);
-            padding: 10px 5px;
+            padding: 5px 2px;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 2px;
             overflow-y: auto;
             border-right: 2px solid var(--gold);        }
 
         .prize-item {
-            padding: 8px 5px;
-            border-radius: 5px;
+            padding: 4px 2px;
+            border-radius: 3px;
             text-align: center;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             transition: all 0.3s;
         }
 
@@ -121,54 +121,54 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 15px;
+            padding: 8px;
             position: relative;
             overflow: hidden;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .header h1 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: var(--gold);
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .stage-info {
             background: rgba(255,215,0,0.2);
-            padding: 8px 20px;
-            border-radius: 20px;
+            padding: 5px 15px;
+            border-radius: 15px;
             display: inline-block;
             font-weight: 700;
             border: 2px solid var(--gold);
-        }
+            font-size: 0.9rem;        }
+
         .boxes-container {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: auto;
-            padding: 10px;
+            overflow: hidden;
+            padding: 5px;
         }
 
         .boxes-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            max-width: 900px;
+            gap: 8px;
             width: 100%;
-            min-height: 100%;
+            max-width: 100%;
         }
 
         .game-box {
             aspect-ratio: 4/3;
             background: linear-gradient(145deg, #283593, #1a237e);
-            border: 3px solid var(--gold);
-            border-radius: 12px;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -176,13 +176,12 @@
             cursor: pointer;
             transition: all 0.3s;
             position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            min-width: 70px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         }
 
         .game-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 215, 0, 0.4);
         }
 
         .game-box:active {
@@ -194,27 +193,27 @@
             cursor: not-allowed;
             filter: grayscale(80%);
         }
-        .game-box.player-box {
-            background: linear-gradient(145deg, var(--gold), #ff8f00);
+
+        .game-box.player-box {            background: linear-gradient(145deg, var(--gold), #ff8f00);
             border-color: #fff;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
             animation: playerBoxPulse 2s infinite;
         }
 
         @keyframes playerBoxPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 1); }
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 1); }
         }
 
         .box-number {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 900;
             color: var(--gold);
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .box-avatar {
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
 
         .game-box.player-box .box-number {
@@ -225,42 +224,45 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            background: rgba(0,0,0,0.5);
-            padding: 15px;
-            border-radius: 15px;
-            margin-top: 10px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 5px;
         }
 
         .info-box {
             text-align: center;
-            padding: 10px 20px;
-            background: rgba(255,215,0,0.1);
-            border-radius: 10px;
+            padding: 6px 12px;
+            background: rgba(255,215,0,0.15);
+            border-radius: 8px;
             border: 2px solid var(--gold);
+            min-width: 80px;
         }
 
         .info-label {
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-bottom: 5px;
+            font-size: 0.65rem;
+            color: #ccc;
+            margin-bottom: 2px;
         }
         .info-value {
-            font-size: 1.3rem;
+            font-size: 1rem;
             font-weight: 900;
             color: var(--gold);
         }
 
         .prize-tree-right {
-            width: 12%;
+            width: 10%;
+            min-width: 50px;
             background: rgba(0,0,0,0.4);
-            padding: 10px 5px;
+            padding: 5px 2px;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 2px;
             overflow-y: auto;
             border-left: 2px solid var(--gold);
         }
 
+        /* Modals */
         .box-modal {
             display: none;
             position: fixed;
@@ -286,16 +288,16 @@
         }
 
         .opening-box {
-            width: 300px;
-            height: 250px;
+            width: 250px;
+            height: 200px;
             background: linear-gradient(145deg, #283593, #1a237e);
-            border: 5px solid var(--gold);
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;            align-items: center;
+            border: 4px solid var(--gold);
+            border-radius: 15px;            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             position: relative;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
             animation: boxShake 0.5s;
         }
 
@@ -316,15 +318,15 @@
         }
 
         .opening-box .box-number {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 15px;
         }
 
         .revealed-prize {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 900;
             color: var(--gold);
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
             opacity: 0;
             transform: scale(0);
             transition: all 0.5s;
@@ -339,8 +341,8 @@
         @keyframes prizePop {
             0% { transform: scale(0); }
             50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
+            100% { transform: scale(1); }        }
+
         .banker-modal {
             display: none;
             position: fixed;
@@ -356,17 +358,17 @@
 
         .banker-modal.show {
             display: flex;
-            animation: fadeIn 0.5s;
         }
 
         .banker-content {
             background: linear-gradient(135deg, #1a237e, #0d1442);
             border: 4px solid var(--gold);
-            border-radius: 30px;
-            padding: 40px;
+            border-radius: 25px;
+            padding: 30px;
             text-align: center;
-            max-width: 500px;
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
             animation: phoneRing 0.5s;
         }
 
@@ -376,31 +378,31 @@
         }
 
         .banker-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: var(--gold);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .banker-offer {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
             color: #4caf50;
-            margin: 30px 0;
+            margin: 25px 0;
             text-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
         }
-
         .banker-buttons {
-            display: flex;            gap: 20px;
+            display: flex;
+            gap: 15px;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 25px;
         }
 
         .btn {
-            padding: 15px 40px;
-            font-size: 1.3rem;
+            padding: 12px 30px;
+            font-size: 1.2rem;
             font-weight: 700;
             border: none;
-            border-radius: 50px;
+            border-radius: 40px;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
@@ -409,18 +411,18 @@
         .btn-yes {
             background: linear-gradient(135deg, #4caf50, #45a049);
             color: white;
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
         }
 
         .btn-no {
             background: linear-gradient(135deg, #f44336, #da190b);
             color: white;
-            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
         }
 
         .result-modal {
@@ -437,28 +439,29 @@
         }
 
         .result-modal.show {
-            display: flex;
-        }
+            display: flex;        }
+
         .result-content {
             background: linear-gradient(135deg, #1a237e, #0d1442);
             border: 4px solid var(--gold);
-            border-radius: 30px;
-            padding: 40px;
+            border-radius: 25px;
+            padding: 30px;
             text-align: center;
-            max-width: 600px;
+            max-width: 550px;
+            width: 90%;
         }
 
         .result-title {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
         }
 
         .result-amount {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 900;
             color: var(--gold);
-            margin: 30px 0;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            margin: 25px 0;
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
         }
 
         #fireworks-canvas {
@@ -469,26 +472,31 @@
             z-index: 8000;
         }
 
-        @media screen and (max-width: 480px) {
-            .game-box {
-                min-width: 60px;
-                padding: 5px;
-            }
-            .box-number { font-size: 1.2rem; }
-            .box-avatar { font-size: 1.5rem; }
-            .prize-tree-left, .prize-tree-right { width: 10%; }
+        @media screen and (max-height: 600px) {
+            .header h1 { font-size: 1.2rem; }
+            .game-box { aspect-ratio: 4/3; }
+            .box-number { font-size: 1rem; }
+            .box-avatar { font-size: 1.2rem; }
+            .banker-offer { font-size: 2.5rem; }
+        }
+
+        @media screen and (max-width: 800px) {
+            .boxes-grid { gap: 6px; }
+            .game-box { border-radius: 6px; }
+            .prize-tree-left, .prize-tree-right { width: 8%; min-width: 40px; }
+            .prize-item { font-size: 0.6rem; padding: 3px 1px; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Splash Screen - EXACT LINK: splach.png (no typo fix) -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <img id="splash-image" src="https://github.com/oozata/ozata/blob/main/splach.png?raw=true" alt="Splash">
         <div id="progress-container">
             <div id="progress-bar"></div>
         </div>
     </div>
+
     <!-- Fireworks Canvas -->
     <canvas id="fireworks-canvas"></canvas>
 
@@ -516,7 +524,7 @@
                     <div class="info-value" id="player-box-num">?</div>
                 </div>
                 <div class="info-box">
-                    <div class="info-label">Teklife Kalan</div>
+                    <div class="info-label">Kalan</div>
                     <div class="info-value" id="boxes-remaining">22</div>
                 </div>
             </div>
@@ -529,15 +537,15 @@
     <div class="box-modal" id="box-modal">
         <div class="opening-box" id="opening-box">
             <div class="box-number" id="modal-box-num">1</div>
-            <div class="box-avatar">📦</div>
-            <div class="revealed-prize" id="revealed-prize">0 TL</div>
+            <div class="box-avatar">📦</div>            <div class="revealed-prize" id="revealed-prize">0 TL</div>
         </div>
     </div>
 
     <div class="banker-modal" id="banker-modal">
         <div class="banker-content">
-            <div class="banker-title">📞 BANKER ARIYOR!</div>
-            <div style="font-size: 1.2rem; margin-bottom: 10px;">Size bir teklif sunuyor:</div>            <div class="banker-offer" id="banker-offer">0 TL</div>
+            <div class="banker-title">📞 BANKA ARIYOR!</div>
+            <div style="font-size: 1.1rem; margin-bottom: 10px;">Size bir teklif sunuyor:</div>
+            <div class="banker-offer" id="banker-offer">0 TL</div>
             <div class="banker-buttons">
                 <button class="btn btn-yes" onclick="acceptOffer()">VARIM!</button>
                 <button class="btn btn-no" onclick="rejectOffer()">YOKUM!</button>
@@ -548,9 +556,9 @@
     <div class="result-modal" id="result-modal">
         <div class="result-content">
             <div class="result-title" id="result-title">TEBRİKLER!</div>
-            <div style="font-size: 1.3rem; margin-bottom: 20px;" id="result-message"></div>
+            <div style="font-size: 1.2rem; margin-bottom: 15px;" id="result-message"></div>
             <div class="result-amount" id="result-amount">0 TL</div>
-            <button class="btn btn-yes" onclick="initGame()" style="margin-top: 30px;">YENİ OYUN</button>
+            <button class="btn btn-yes" onclick="initGame()" style="margin-top: 25px;">YENİ OYUN</button>
         </div>
     </div>
 
@@ -560,7 +568,6 @@
         const progressBar = document.getElementById('progress-bar');
         const splashImg = document.getElementById('splash-image');
 
-        // Doğrudan 'splach.png' yükleniyor — harf değiştirilmedi
         splashImg.onload = () => {
             let progress = 0;
             const duration = 4000;
@@ -579,29 +586,35 @@
             }, interval);
         };
 
-        splashImg.onerror = () => {
-            console.warn("⚠️ Splash resmi yüklenemedi (URL: splach.png). Oyun 1s sonra başlıyor.");
+        splashImg.onerror = () => {            console.warn("⚠️ Splash resmi yüklenemedi. Oyun 1s sonra başlıyor.");
             setTimeout(initGame, 1000);
         };
 
-        // === GAME LOGIC ===
+        // === GAME VARIABLES ===
         const prizes = [
-            1, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000,            25000, 50000, 100000, 250000, 500000,
+            1, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000,
+            25000, 50000, 100000, 250000, 500000,
             750000, 1000000, 2000000, 3000000, 5000000, 5000000
         ];
 
-        const avatars = ['😀','😎','🤠','😭','🤔','😋','😍','🥰','😘','🥳','🤪','😎','🤠','😜','🤗','🤩','😇','🤯','🤓','🧐','🤡','👻'];
-
-        let boxContents = {}, playerBox = null, openedBoxes = [], currentStage = 0;
+        const avatars = [😀','😎','🤠','😭','🤔','😋','😍','🥰','😘','🥳','🤪','😎','🤠','😜','🤗','🤩','😇','🤯','🤓','🧐','🤡','👻'];
+        
+        let boxContents = {};
+        let playerBox = null;
+        let openedBoxes = [];
+        let currentStage = 0;
         const stages = [4, 3, 3, 3, 3, 2, 2];
-        let openedInCurrentStage = 0, gameActive = false, currentOffer = 0, lastOffer = 0;
+        let openedInCurrentStage = 0;
+        let gameActive = false;
+        let currentOffer = 0;
+        let lastOffer = 0;
         let audioCtx = null;
 
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
 
-        // SOUNDS (iyileştirilmiş)
+        // === SOUNDS ===
         function playPhoneRing() {
             if (!audioCtx) initAudio();
             const now = audioCtx.currentTime;
@@ -622,8 +635,7 @@
         }
 
         function playDramSound() {
-            if (!audioCtx) initAudio();
-            const now = audioCtx.currentTime;
+            if (!audioCtx) initAudio();            const now = audioCtx.currentTime;
             for (let i = 0; i < 8; i++) {
                 const t = now + i * 0.15;
                 const osc = audioCtx.createOscillator();
@@ -635,7 +647,8 @@
                 g.gain.setValueAtTime(0.3, t);
                 g.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
                 osc.start(t); osc.stop(t + 0.1);
-            }            const tens = audioCtx.createOscillator();
+            }
+            const tens = audioCtx.createOscillator();
             const tg = audioCtx.createGain();
             tens.connect(tg); tg.connect(audioCtx.destination);
             tens.type = 'sawtooth';
@@ -650,7 +663,6 @@
         function playCelebration() {
             if (!audioCtx) initAudio();
             const now = audioCtx.currentTime;
-            // Alkış (noise)
             const buf = audioCtx.createBuffer(1, audioCtx.sampleRate, audioCtx.sampleRate);
             const d = buf.getChannelData(0);
             for (let i = 0; i < audioCtx.sampleRate; i++) d[i] = Math.random() * 2 - 1;
@@ -666,15 +678,13 @@
             noise.connect(f); f.connect(g); g.connect(audioCtx.destination);
             noise.start(now);
 
-            // Çığlık
             for (let i = 0; i < 4; i++) {
                 const osc = audioCtx.createOscillator();
                 const g2 = audioCtx.createGain();
                 osc.connect(g2); g2.connect(audioCtx.destination);
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600 + Math.random()*400, now + i*0.3);
-                osc.frequency.exponentialRampToValueAtTime(800 + Math.random()*400, now + i*0.3 + 0.2);
-                g2.gain.setValueAtTime(0, now + i*0.3);
+                osc.frequency.exponentialRampToValueAtTime(800 + Math.random()*400, now + i*0.3 + 0.2);                g2.gain.setValueAtTime(0, now + i*0.3);
                 g2.gain.linearRampToValueAtTime(0.2, now + i*0.3 + 0.1);
                 g2.gain.exponentialRampToValueAtTime(0.01, now + i*0.3 + 0.3);
                 osc.start(now + i*0.3);
@@ -684,7 +694,8 @@
 
         function playDisappointment() {
             if (!audioCtx) initAudio();
-            const now = audioCtx.currentTime;            for (let i = 0; i < 3; i++) {
+            const now = audioCtx.currentTime;
+            for (let i = 0; i < 3; i++) {
                 const osc = audioCtx.createOscillator();
                 const g = audioCtx.createGain();
                 osc.connect(g); g.connect(audioCtx.destination);
@@ -709,7 +720,7 @@
             bass.stop(now + 0.5);
         }
 
-        // FIREWORKS
+        // === FIREWORKS ===
         class Firework {
             constructor(x, y) {
                 this.x = x; this.y = y;
@@ -722,8 +733,7 @@
                         x, y,
                         vx: Math.cos(a)*v,
                         vy: Math.sin(a)*v,
-                        life: 1,
-                        color: cols[Math.floor(Math.random()*cols.length)]
+                        life: 1,                        color: cols[Math.floor(Math.random()*cols.length)]
                     });
                 }
             }
@@ -733,7 +743,8 @@
                 });
                 this.particles = this.particles.filter(p => p.life > 0);
             }
-            draw(ctx) {                this.particles.forEach(p => {
+            draw(ctx) {
+                this.particles.forEach(p => {
                     ctx.globalAlpha = p.life;
                     ctx.fillStyle = p.color;
                     ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
@@ -769,10 +780,9 @@
             setTimeout(() => fireworksActive = false, 5000);
         }
 
-        // INIT GAME
+        // === GAME LOGIC ===
         function initGame() {
-            playerBox = null;
-            openedBoxes = [];
+            playerBox = null;            openedBoxes = [];
             currentStage = 0;
             openedInCurrentStage = 0;
             gameActive = true;
@@ -782,6 +792,7 @@
 
             const shuffled = [...prizes].sort(() => Math.random() - 0.5);
             for (let i = 1; i <= 22; i++) boxContents[i] = shuffled[i-1];
+
             renderPrizeTrees();
             renderBoxes();
             document.getElementById('stage-info').textContent = 'Kendi kutunuzu seçin!';
@@ -820,8 +831,7 @@
         function handleBoxClick(boxNum) {
             if (!gameActive || openedBoxes.includes(boxNum)) return;
 
-            if (playerBox === null) {
-                playerBox = boxNum;
+            if (playerBox === null) {                playerBox = boxNum;
                 document.getElementById(`box-${boxNum}`).classList.add('player-box');
                 document.getElementById('player-box-num').textContent = boxNum;
                 document.getElementById('stage-info').textContent = `1. Etap: ${stages[0]} kutu açın`;
@@ -832,6 +842,7 @@
                 alert("Kendi kutunuzu açamazsınız!");
                 return;
             }
+
             openBoxWithAnimation(boxNum);
         }
 
@@ -867,28 +878,37 @@
                     
                     const boxEl = document.getElementById(`box-${boxNum}`);
                     boxEl.classList.add('disabled');
-                    boxEl.innerHTML = `<div style="font-size:0.9rem;color:var(--gold);">${formatMoney(prize)}</div>`;
+                    boxEl.innerHTML = `<div style="font-size:0.8rem;color:var(--gold);">${formatMoney(prize)}</div>`;
                     
-                    document.getElementById(`prize-${prize}`).classList.add('opened');
-                    document.getElementById('boxes-remaining').textContent = 22 - openedBoxes.length;
+                    document.getElementById(`prize-${prize}`).classList.add('opened');                    document.getElementById('boxes-remaining').textContent = 22 - openedBoxes.length;
 
+                    // DÜZELTME: Banka teklifi kontrolü
                     if (openedInCurrentStage >= stages[currentStage]) {
                         gameActive = false;
-                        setTimeout(showBankerOffer, 1000);
+                        setTimeout(() => showBankerOffer(), 1000);
                     } else {
                         const rem = stages[currentStage] - openedInCurrentStage;
                         document.getElementById('stage-info').textContent = 
                             `${currentStage+1}. Etap: ${rem} kutu daha açın`;
                     }
-                }, 2000);            }, 1000);
+                }, 2000);
+            }, 1000);
         }
 
         function showBankerOffer() {
             const remaining = prizes.filter(p => 
                 !openedBoxes.some(b => boxContents[b] === p) || boxContents[playerBox] === p
             );
-            const ev = remaining.reduce((a,b)=>a+b,0) / remaining.length;
-            const mult = [0.65,0.75,0.80,0.85,0.90,0.95,1.0][currentStage];
+            
+            if (remaining.length === 0) {
+                // Son kutu kaldıysa direkt aç
+                openOwnBox();
+                return;
+            }
+            
+            const sum = remaining.reduce((a,b) => a + b, 0);
+            const ev = sum / remaining.length;
+            const mult = [0.65, 0.75, 0.80, 0.85, 0.90, 0.95, 1.0][currentStage] || 0.9;
             currentOffer = Math.round(ev * mult * (0.95 + Math.random()*0.1));
             currentOffer = Math.max(currentOffer, Math.min(...remaining));
 
@@ -908,9 +928,11 @@
             document.getElementById('banker-modal').classList.remove('show');
             lastOffer = currentOffer;
             document.getElementById('last-offer').textContent = formatMoney(lastOffer);
-            currentStage++; openedInCurrentStage = 0;
-            if (currentStage >= stages.length) setTimeout(openOwnBox, 500);
-            else {
+            currentStage++; 
+            openedInCurrentStage = 0;            
+            if (currentStage >= stages.length) {
+                setTimeout(openOwnBox, 500);
+            } else {
                 gameActive = true;
                 document.getElementById('stage-info').textContent = 
                     `${currentStage+1}. Etap: ${stages[currentStage]} kutu açın`;
@@ -929,11 +951,12 @@
             const m = document.getElementById('result-modal');
             m.classList.add('show');
             document.getElementById('result-amount').textContent = formatMoney(f);
+
             const title = document.getElementById('result-title');
             const msg = document.getElementById('result-message');
             if (accepted) {
                 title.textContent = p <= f ? '🎉 TEBRİKLER!' : '😔 SONUÇ';
-                msg.innerHTML = `Banker teklifini kabul ettiniz.<br>Kutunuzda: ${formatMoney(p)} vardı.`;
+                msg.innerHTML = `Banka teklifini kabul ettiniz.<br>Kutunuzda: ${formatMoney(p)} vardı.`;
                 document.getElementById('result-amount').style.color = f >= p ? '#4caf50' : '#ff9800';
                 if (f >= p) startFireworks();
             } else {
@@ -948,23 +971,21 @@
                     document.getElementById('result-amount').style.color = '#ffc107';
                 } else {
                     title.textContent = '😢 ÜZÜCÜ';
-                    msg.innerHTML = `Kutunuzdan küçük ödül çıktı.<br>Banker teklifini (${formatMoney(currentOffer)}) reddetmiştiniz.`;
+                    msg.innerHTML = `Kutunuzdan küçük ödül çıktı.<br>Banka teklifini (${formatMoney(currentOffer)}) reddetmiştiniz.`;
                     document.getElementById('result-amount').style.color = '#f44336';
                     playDisappointment();
                 }
             }
 
             for (let i = 1; i <= 22; i++) {
-                if (!openedBoxes.includes(i)) {
-                    const el = document.getElementById(`box-${i}`);
-                    el.innerHTML = `<div style="font-size:0.8rem;color:var(--gold);">${formatMoney(boxContents[i])}</div>`;
+                if (!openedBoxes.includes(i)) {                    const el = document.getElementById(`box-${i}`);
+                    el.innerHTML = `<div style="font-size:0.7rem;color:var(--gold);">${formatMoney(boxContents[i])}</div>`;
                 }
             }
         }
 
-        // Auto-start on load — no orientation warning
         window.addEventListener('load', () => {
-            // Oyun doğrudan yatay modda başlar — kullanıcı mecburen yan çevirir
+            // Oyun doğrudan başlar
         });
     </script>
 </body>
