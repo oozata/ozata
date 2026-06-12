@@ -30,11 +30,9 @@
         #game { display: none; width: 100vw; height: 100vh; overflow: hidden; }
         #game.show { display: flex; }
 
-        /* LANDSCAPE - Yanlarda dikey prize trees */
+        /* Side panels - KRİTİK: min-height: 0 ve overflow */
         .side {
-            width: 9%;
-            min-width: 45px;
-            max-width: 80px;
+            flex-shrink: 0;
             background: rgba(0,0,0,0.5);
             border: 2px solid #ffd700;
             border-radius: 5px;
@@ -43,6 +41,7 @@
             display: flex;
             flex-direction: column;
             gap: min(0.2vh, 2px);
+            min-height: 0;
         }
         .side.left { margin-right: min(0.4vw, 3px); }
         .side.right { margin-left: min(0.4vw, 3px); }
@@ -54,19 +53,21 @@
             font-weight: bold;
             font-size: clamp(0.4rem, 1vh, 0.65rem);
             white-space: nowrap;
+            flex-shrink: 0;
         }
         .prize.blue { background: linear-gradient(90deg, #2196f3, #64b5f6); color: #000; }
         .prize.yellow { background: linear-gradient(90deg, #ffc107, #ffe082); color: #000; }
         .prize.red { background: linear-gradient(90deg, #f44336, #ef5350); color: #fff; }
         .prize.opened { opacity: 0.15; filter: grayscale(100%); transform: scale(0.95); }
 
-        /* Orta alan */
+        /* Orta alan - KRİTİK: min-height: 0 */
         .main {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             padding: min(0.4vh, 3px);
+            min-height: 0;
             min-width: 0;
         }
 
@@ -82,6 +83,7 @@
             font-size: clamp(0.6rem, 1.3vh, 0.85rem);
         }
 
+        /* Kutuların sarmalayıcısı - KRİTİK: min-height: 0 */
         .boxes-wrap {
             flex: 1;
             display: flex;
@@ -89,19 +91,18 @@
             justify-content: center;
             overflow: hidden;
             padding: min(0.3vh, 2px);
+            min-height: 0;
         }
 
         .boxes-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(5, 1fr);
-            gap: clamp(2px, 0.5vh, 5px);
             width: 100%;
             height: 100%;
             max-width: 100%;
             max-height: 100%;
         }
 
+        /* Kutular - aspect-ratio KALDIRILDI, grid'e uyum sağlıyor */
         .box {
             background: linear-gradient(145deg, #283593, #1a237e);
             border: 2px solid #ffd700;
@@ -113,7 +114,10 @@
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.4);
             transition: all 0.3s;
-            aspect-ratio: 1/1;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            min-width: 0;
         }
         .box:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(255,215,0,0.4); }
         .box:active { transform: scale(0.95); }
@@ -132,6 +136,7 @@
         .box.player .box-num { color: #000; }
         .box-emoji { font-size: clamp(0.75rem, 2.2vh, 1.2rem); line-height: 1; }
 
+        /* Bottom bar - KRİTİK: flex-shrink: 0 */
         .bottom {
             display: flex;
             justify-content: space-around;
@@ -152,18 +157,20 @@
         .info-label { font-size: clamp(0.45rem, 1.1vh, 0.65rem); color: #ccc; margin-bottom: 1px; }
         .info-value { font-size: clamp(0.65rem, 1.8vh, 0.95rem); font-weight: 900; color: #ffd700; }
 
-        /* ===== PORTRAIT - Üstte ve altta yatay prize trees ===== */
+        /* ===== PORTRAIT ===== */
         @media (orientation: portrait) {
             #game { flex-direction: column; }
             
             .side {
                 width: 100%;
-                height: clamp(45px, 9vh, 70px);
+                height: clamp(40px, 8vh, 65px);
                 flex-direction: row;
                 padding: clamp(2px, 0.3vh, 4px);
                 margin: 0;
                 border-radius: 5px;
                 gap: clamp(2px, 0.3vh, 3px);
+                overflow-x: auto; /* Yatay kaydırma */
+                overflow-y: hidden;
             }
             .side.left { 
                 border-bottom: 2px solid #ffd700; 
@@ -180,9 +187,10 @@
             .prize { 
                 font-size: clamp(0.4rem, 1vh, 0.6rem);
                 padding: clamp(1px, 0.2vh, 3px) clamp(2px, 0.4vw, 4px);
+                min-width: clamp(40px, 8vw, 60px);
             }
             
-            /* PORTRAIT: 4 sütun × 6 satır = 24 yer (22 kutu sığar) */
+            /* PORTRAIT: 4 sütun × 6 satır = 24 yer */
             .boxes-grid {
                 grid-template-columns: repeat(4, 1fr);
                 grid-template-rows: repeat(6, 1fr);
@@ -193,20 +201,20 @@
             .box-emoji { font-size: clamp(0.7rem, 2vh, 1.1rem); }
         }
 
-        /* LANDSCAPE */
+        /* ===== LANDSCAPE ===== */
         @media (orientation: landscape) {
-            .side { height: 100%; }
+            .side { 
+                height: 100%;
+                width: clamp(60px, 9vw, 100px);
+            }
             .side.left { border-right: 2px solid #ffd700; }
             .side.right { border-left: 2px solid #ffd700; }
-            /* LANDSCAPE: 5 sütun × 5 satır = 25 yer (22 kutu sığar) */
-            .boxes-grid { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); }
-        }
-
-        /* Küçük ekranlar için daha da küçült */
-        @media (max-width: 450px) and (orientation: portrait) {
-            .boxes-grid { grid-template-columns: repeat(4, 1fr); }
-            .box-num { font-size: clamp(0.55rem, 1.6vh, 0.85rem); }
-            .box-emoji { font-size: clamp(0.65rem, 1.8vh, 1rem); }
+            /* LANDSCAPE: 5 sütun × 5 satır = 25 yer */
+            .boxes-grid { 
+                grid-template-columns: repeat(5, 1fr); 
+                grid-template-rows: repeat(5, 1fr);
+                gap: clamp(2px, 0.5vh, 5px);
+            }
         }
 
         /* ===== MODAL ===== */
@@ -242,7 +250,6 @@
         .btn-no { background: linear-gradient(135deg, #f44336, #da190b); color: white; box-shadow: 0 3px 8px rgba(244,67,54,0.4); }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.4); }
 
-        /* Box açma animasyonu */
         .box-open-anim {
             animation: boxShake 0.5s, boxOpen 1s 0.5s forwards;
         }
@@ -361,14 +368,8 @@
         // ===== OYUN DEĞİŞKENLERİ =====
         const prizes = [1,5,10,25,50,100,250,500,1000,5000,10000,25000,50000,100000,250000,500000,750000,1000000,2000000,3000000,5000000,5000000];
         
-        // TÜM 22 EMOJİ - HİÇBİRİ BOŞ DEĞİL
-        const avatars = [
-            '😀', '😎', '🤠', '🥳', '🤔',
-            '🧐', '😍', '🥰', '😘', '🎉',
-            '🤪', '😎', '🤠', '🤗', '🤩',
-            '😇', '🤯', '🤓', '🥸', '🤡',
-            '👻', '🎃'
-        ];
+        // TÜM 22 EMOJİ - HİÇBİRİ BOŞ DEĞİL (kullanıcının ekranındaki sırayla)
+        const avatars = ['😀', '😎', '🤠', '🥳', '🤔', '🧐', '😍', '🥰', '😘', '🎉', '🤪', '😎', '🤠', '🤗', '🤩', '😇', '🤯', '🤓', '🥸', '🤡', '👻', '🎃'];
         
         let boxContents = {}, playerBox = null, opened = [], stage = 0, openedInStage = 0;
         const stages = [4,3,3,3,3,2,2];
@@ -634,13 +635,13 @@
             document.getElementById('result-amount').textContent = fin.toLocaleString('tr-TR') + ' TL';
             document.getElementById('result-modal').classList.add('show');
             if (acc) {
-                document.getElementById('result-title').textContent = pp <= fin ? '🎉 TEBRİKLER!' : '😔 SONUÇ';
+                document.getElementById('result-title').textContent = pp <= fin ? '🎉 TEBRİKLER!' : ' SONUÇ';
                 document.getElementById('result-msg').innerHTML = `Banka teklifini kabul ettiniz.<br>Kutunuzda: ${pp.toLocaleString('tr-TR')} TL vardı.`;
                 document.getElementById('result-amount').style.color = fin >= pp ? '#4caf50' : '#ff9800';
                 if (fin >= pp) startFW();
             } else {
                 if (pp >= 100000) {
-                    document.getElementById('result-title').textContent = '🎆 MUHTEŞEM!';
+                    document.getElementById('result-title').textContent = ' MUHTEŞEM!';
                     document.getElementById('result-msg').innerHTML = 'Kutunuzdan büyük ödül çıktı!<br>Harika bir oyun çıkardınız!';
                     document.getElementById('result-amount').style.color = '#4caf50';
                     startFW();
@@ -649,7 +650,7 @@
                     document.getElementById('result-msg').innerHTML = `Kutunuzdan orta seviye ödül çıktı.<br>${pp.toLocaleString('tr-TR')} TL kazandınız.`;
                     document.getElementById('result-amount').style.color = '#ffc107';
                 } else {
-                    document.getElementById('result-title').textContent = '😢 ÜZÜCÜ';
+                    document.getElementById('result-title').textContent = ' ÜZÜCÜ';
                     document.getElementById('result-msg').innerHTML = `Kutunuzdan küçük ödül çıktı.<br>Banka teklifini (${offer.toLocaleString('tr-TR')} TL) reddetmiştiniz.`;
                     document.getElementById('result-amount').style.color = '#f44336';
                     playSound('sad');
