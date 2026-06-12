@@ -32,27 +32,27 @@
 
         /* LANDSCAPE - Yanlarda dikey prize trees */
         .side {
-            width: 10%;
-            min-width: 50px;
-            max-width: 90px;
+            width: 9%;
+            min-width: 45px;
+            max-width: 80px;
             background: rgba(0,0,0,0.5);
             border: 2px solid #ffd700;
             border-radius: 5px;
-            padding: min(0.5vh, 3px) min(0.3vw, 2px);
+            padding: min(0.4vh, 3px) min(0.2vw, 2px);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: min(0.3vh, 2px);
+            gap: min(0.2vh, 2px);
         }
-        .side.left { margin-right: min(0.5vw, 3px); }
-        .side.right { margin-left: min(0.5vw, 3px); }
+        .side.left { margin-right: min(0.4vw, 3px); }
+        .side.right { margin-left: min(0.4vw, 3px); }
 
         .prize {
-            padding: min(0.4vh, 3px) min(0.2vw, 2px);
+            padding: min(0.3vh, 2px) min(0.15vw, 1px);
             border-radius: 3px;
             text-align: center;
             font-weight: bold;
-            font-size: clamp(0.45rem, 1.1vh, 0.7rem);
+            font-size: clamp(0.4rem, 1vh, 0.65rem);
             white-space: nowrap;
         }
         .prize.blue { background: linear-gradient(90deg, #2196f3, #64b5f6); color: #000; }
@@ -66,19 +66,20 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            padding: min(0.5vh, 3px);
+            padding: min(0.4vh, 3px);
+            min-width: 0;
         }
 
-        .header { text-align: center; margin-bottom: min(0.5vh, 3px); flex-shrink: 0; }
-        .header h1 { font-size: clamp(0.9rem, 2.5vh, 1.5rem); color: #ffd700; margin-bottom: min(0.3vh, 2px); text-shadow: 0 0 10px rgba(255,215,0,0.6); }
+        .header { text-align: center; margin-bottom: min(0.4vh, 3px); flex-shrink: 0; }
+        .header h1 { font-size: clamp(0.8rem, 2.2vh, 1.3rem); color: #ffd700; margin-bottom: min(0.2vh, 2px); text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         .stage {
             background: rgba(255,215,0,0.2);
             border: 2px solid #ffd700;
             border-radius: 12px;
-            padding: min(0.3vh, 3px) min(1.5vw, 12px);
+            padding: min(0.2vh, 2px) min(1vw, 10px);
             display: inline-block;
             font-weight: bold;
-            font-size: clamp(0.65rem, 1.5vh, 0.9rem);
+            font-size: clamp(0.6rem, 1.3vh, 0.85rem);
         }
 
         .boxes-wrap {
@@ -87,19 +88,21 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            padding: min(0.5vh, 3px);
+            padding: min(0.3vh, 2px);
         }
 
         .boxes-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: clamp(3px, 0.6vh, 6px);
+            grid-template-rows: repeat(5, 1fr);
+            gap: clamp(2px, 0.5vh, 5px);
             width: 100%;
+            height: 100%;
             max-width: 100%;
+            max-height: 100%;
         }
 
         .box {
-            aspect-ratio: 1/1;
             background: linear-gradient(145deg, #283593, #1a237e);
             border: 2px solid #ffd700;
             border-radius: 6px;
@@ -110,6 +113,7 @@
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.4);
             transition: all 0.3s;
+            aspect-ratio: 1/1;
         }
         .box:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(255,215,0,0.4); }
         .box:active { transform: scale(0.95); }
@@ -124,29 +128,29 @@
             50% { box-shadow: 0 0 16px rgba(255,215,0,1); }
         }
         .box.disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(80%); }
-        .box-num { font-size: clamp(0.75rem, 2vh, 1.1rem); font-weight: 900; color: #ffd700; margin-bottom: 1px; line-height: 1; }
+        .box-num { font-size: clamp(0.65rem, 1.8vh, 1rem); font-weight: 900; color: #ffd700; margin-bottom: 1px; line-height: 1; }
         .box.player .box-num { color: #000; }
-        .box-emoji { font-size: clamp(0.85rem, 2.5vh, 1.3rem); line-height: 1; }
+        .box-emoji { font-size: clamp(0.75rem, 2.2vh, 1.2rem); line-height: 1; }
 
         .bottom {
             display: flex;
             justify-content: space-around;
             background: rgba(0,0,0,0.7);
             border-radius: 8px;
-            padding: clamp(4px, 0.8vh, 8px);
-            margin-top: clamp(2px, 0.4vh, 4px);
+            padding: clamp(3px, 0.6vh, 6px);
+            margin-top: clamp(2px, 0.3vh, 3px);
             flex-shrink: 0;
         }
         .info {
             text-align: center;
-            padding: clamp(3px, 0.6vh, 6px) clamp(6px, 1.2vw, 12px);
+            padding: clamp(2px, 0.5vh, 5px) clamp(5px, 1vw, 10px);
             background: rgba(255,215,0,0.15);
             border: 2px solid #ffd700;
             border-radius: 6px;
-            min-width: clamp(50px, 10vw, 80px);
+            min-width: clamp(45px, 9vw, 70px);
         }
-        .info-label { font-size: clamp(0.5rem, 1.2vh, 0.7rem); color: #ccc; margin-bottom: 1px; }
-        .info-value { font-size: clamp(0.7rem, 2vh, 1rem); font-weight: 900; color: #ffd700; }
+        .info-label { font-size: clamp(0.45rem, 1.1vh, 0.65rem); color: #ccc; margin-bottom: 1px; }
+        .info-value { font-size: clamp(0.65rem, 1.8vh, 0.95rem); font-weight: 900; color: #ffd700; }
 
         /* ===== PORTRAIT - Üstte ve altta yatay prize trees ===== */
         @media (orientation: portrait) {
@@ -154,12 +158,12 @@
             
             .side {
                 width: 100%;
-                height: clamp(50px, 10vh, 80px);
+                height: clamp(45px, 9vh, 70px);
                 flex-direction: row;
-                padding: clamp(2px, 0.4vh, 5px);
+                padding: clamp(2px, 0.3vh, 4px);
                 margin: 0;
                 border-radius: 5px;
-                gap: clamp(2px, 0.3vh, 4px);
+                gap: clamp(2px, 0.3vh, 3px);
             }
             .side.left { 
                 border-bottom: 2px solid #ffd700; 
@@ -174,17 +178,19 @@
             .main { order: 2; }
             
             .prize { 
-                font-size: clamp(0.45rem, 1.1vh, 0.65rem);
-                padding: clamp(2px, 0.3vh, 4px) clamp(3px, 0.5vw, 5px);
+                font-size: clamp(0.4rem, 1vh, 0.6rem);
+                padding: clamp(1px, 0.2vh, 3px) clamp(2px, 0.4vw, 4px);
             }
             
+            /* PORTRAIT: 4 sütun × 6 satır = 24 yer (22 kutu sığar) */
             .boxes-grid {
-                grid-template-columns: repeat(5, 1fr);
-                gap: clamp(3px, 0.6vh, 6px);
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+                gap: clamp(2px, 0.5vh, 5px);
             }
             
-            .box-num { font-size: clamp(0.7rem, 2vh, 1rem); }
-            .box-emoji { font-size: clamp(0.8rem, 2.2vh, 1.2rem); }
+            .box-num { font-size: clamp(0.6rem, 1.8vh, 0.95rem); }
+            .box-emoji { font-size: clamp(0.7rem, 2vh, 1.1rem); }
         }
 
         /* LANDSCAPE */
@@ -192,12 +198,15 @@
             .side { height: 100%; }
             .side.left { border-right: 2px solid #ffd700; }
             .side.right { border-left: 2px solid #ffd700; }
-            .boxes-grid { grid-template-columns: repeat(5, 1fr); }
+            /* LANDSCAPE: 5 sütun × 5 satır = 25 yer (22 kutu sığar) */
+            .boxes-grid { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); }
         }
 
-        /* Küçük ekranlar */
-        @media (max-width: 500px) and (orientation: portrait) {
+        /* Küçük ekranlar için daha da küçült */
+        @media (max-width: 450px) and (orientation: portrait) {
             .boxes-grid { grid-template-columns: repeat(4, 1fr); }
+            .box-num { font-size: clamp(0.55rem, 1.6vh, 0.85rem); }
+            .box-emoji { font-size: clamp(0.65rem, 1.8vh, 1rem); }
         }
 
         /* ===== MODAL ===== */
@@ -264,7 +273,7 @@
         <div class="side left" id="prizes-left"></div>
         <div class="main">
             <div class="header">
-                <h1>📦 VAR MISIN YOK MUSUN 📦</h1>
+                <h1>📦 VAR MISIN YOK MUSUN </h1>
                 <div class="stage" id="stage">Kendi kutunuzu seçin!</div>
             </div>
             <div class="boxes-wrap">
@@ -297,7 +306,7 @@
 
     <div class="modal" id="banker-modal">
         <div class="modal-box">
-            <div class="modal-title"> BANKA ARIYOR!</div>
+            <div class="modal-title">📞 BANKA ARIYOR!</div>
             <div class="modal-text">Size bir teklif sunuyor:</div>
             <div class="big-amount" id="banker-offer">0 TL</div>
             <div class="modal-buttons">
@@ -561,7 +570,7 @@
                 openedInStage++;
                 const b = document.getElementById(`box-${n}`);
                 b.classList.add('disabled');
-                b.innerHTML = `<div style="font-size:0.65rem;color:#ffd700;">${p.toLocaleString('tr-TR')} TL</div>`;
+                b.innerHTML = `<div style="font-size:0.6rem;color:#ffd700;">${p.toLocaleString('tr-TR')} TL</div>`;
                 if (prizeMap[p] && prizeMap[p].length > 0) {
                     const id = prizeMap[p].shift();
                     const el = document.getElementById(id);
@@ -648,7 +657,7 @@
             }
             for (let i = 1; i <= 22; i++) {
                 if (!opened.includes(i)) {
-                    document.getElementById(`box-${i}`).innerHTML = `<div style="font-size:0.6rem;color:#ffd700;">${boxContents[i].toLocaleString('tr-TR')} TL</div>`;
+                    document.getElementById(`box-${i}`).innerHTML = `<div style="font-size:0.55rem;color:#ffd700;">${boxContents[i].toLocaleString('tr-TR')} TL</div>`;
                 }
             }
         }
