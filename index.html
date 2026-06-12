@@ -47,7 +47,8 @@
         }
 
         #splash-screen.hidden {
-            display: none !important;        }
+            display: none !important;
+        }
 
         #splash-image {
             width: min(60vw, 60vh, 400px);
@@ -96,7 +97,8 @@
             width: 10%;
             min-width: 50px;
             background: rgba(0,0,0,0.5);
-            padding: 5px 2px;            display: flex;
+            padding: 5px 2px;
+            display: flex;
             flex-direction: column;
             gap: 3px;
             overflow-y: auto;
@@ -145,7 +147,8 @@
             padding: 5px 15px;
             border-radius: 12px;
             display: inline-block;
-            font-weight: 700;            border: 2px solid var(--gold);
+            font-weight: 700;
+            border: 2px solid var(--gold);
             font-size: 0.9rem;
         }
 
@@ -194,7 +197,8 @@
             margin-bottom: 2px;
         }
 
-        .box-avatar {            font-size: 1.5rem;
+        .box-avatar {
+            font-size: 1.5rem;
         }
 
         .game-box.player-box .box-number {
@@ -244,6 +248,7 @@
             justify-content: center;
             align-items: center;
         }
+
         .modal.show {
             display: flex;
         }
@@ -292,7 +297,8 @@
             cursor: pointer;
         }
 
-        .btn-yes { background: linear-gradient(135deg, #4caf50, #45a049); color: white; }        .btn-no { background: linear-gradient(135deg, #f44336, #da190b); color: white; }
+        .btn-yes { background: linear-gradient(135deg, #4caf50, #45a049); color: white; }
+        .btn-no { background: linear-gradient(135deg, #f44336, #da190b); color: white; }
 
         #fireworks-canvas {
             position: fixed;
@@ -341,7 +347,8 @@
                     <div class="boxes-grid" id="boxes-grid"></div>
                 </div>
                 <div class="bottom-info">
-                    <div class="info-box">                        <div class="info-label">Son Teklif</div>
+                    <div class="info-box">
+                        <div class="info-label">Son Teklif</div>
                         <div class="info-value" id="last-offer">0 TL</div>
                     </div>
                     <div class="info-box">
@@ -390,7 +397,8 @@
     <script>
         // === SPLASH SCREEN ===
         const splashScreen = document.getElementById('splash-screen');
-        const progressBar = document.getElementById('progress-bar');        const splashImg = document.getElementById('splash-image');
+        const progressBar = document.getElementById('progress-bar');
+        const splashImg = document.getElementById('splash-image');
         let gameStarted = false;
 
         function startGameAfterSplash() {
@@ -439,7 +447,8 @@
         const prizes = [
             1, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000,
             25000, 50000, 100000, 250000, 500000,
-            750000, 1000000, 2000000, 3000000, 5000000, 5000000        ];
+            750000, 1000000, 2000000, 3000000, 5000000, 5000000
+        ];
 
         // TÜM 22 EMOJİ - HİÇBİRİ BOŞ DEĞİL!
         const avatars = [
@@ -488,7 +497,8 @@
 
         function playDramSound() {
             try {
-                initAudio();                if (!audioCtx) return;
+                initAudio();
+                if (!audioCtx) return;
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
@@ -537,7 +547,8 @@
         class Firework {
             constructor(x, y) {
                 this.x = x;
-                this.y = y;                this.particles = [];
+                this.y = y;
+                this.particles = [];
                 const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#fa0', '#fff'];
                 for (let i = 0; i < 30; i++) {
                     const angle = (Math.PI * 2 * i) / 30;
@@ -586,7 +597,8 @@
                 ctx.fillStyle = 'rgba(0,0,0,0.1)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 if (Math.random() < 0.05) {
-                    fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height * 0.5));                }
+                    fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height * 0.5));
+                }
                 fireworks.forEach(fw => { fw.update(); fw.draw(ctx); });
                 fireworks = fireworks.filter(fw => fw.particles.length > 0);
                 requestAnimationFrame(animate);
@@ -635,7 +647,8 @@
                 if (!counts[p]) counts[p] = 0;
                 counts[p]++;
                 const el = document.createElement('div');
-                const id = `prize-${p}-${counts[p]}`;                el.id = id;
+                const id = `prize-${p}-${counts[p]}`;
+                el.id = id;
                 el.className = `prize-item ${p<=10000?'blue':p<=500000?'yellow':'red'}`;
                 el.textContent = p.toLocaleString('tr-TR') + ' TL';
                 if (!prizeElementMap[p]) prizeElementMap[p] = [];
@@ -684,7 +697,8 @@
             document.getElementById('revealed-prize').textContent = prize.toLocaleString('tr-TR') + ' TL';
             document.getElementById('revealed-prize').style.color = prize <= 10000 ? '#2196f3' : prize <= 500000 ? '#ffc107' : '#f44336';
             
-            modal.classList.add('show');            playDramSound();
+            modal.classList.add('show');
+            playDramSound();
 
             setTimeout(() => {
                 if (prize <= 10000) playCelebration();
@@ -733,7 +747,8 @@
             const ev = sum / remaining.length;
             const mult = [0.20, 0.30, 0.40, 0.50, 0.60, 0.75, 0.90][currentStage] || 0.5;
             const random = 0.9 + Math.random() * 0.2;
-                        currentOffer = Math.round(ev * mult * random / 100) * 100;
+            
+            currentOffer = Math.round(ev * mult * random / 100) * 100;
             currentOffer = Math.max(currentOffer, Math.min(...remaining));
 
             playPhoneRing();
@@ -782,7 +797,8 @@
                 document.getElementById('result-amount').style.color = final >= playerPrize ? '#4caf50' : '#ff9800';
                 if (final >= playerPrize) startFireworks();
             } else {
-                if (playerPrize >= 100000) {                    document.getElementById('result-title').textContent = '🎆 MUHTEŞEM!';
+                if (playerPrize >= 100000) {
+                    document.getElementById('result-title').textContent = '🎆 MUHTEŞEM!';
                     document.getElementById('result-message').innerHTML = 'Kutunuzdan büyük ödül çıktı!';
                     document.getElementById('result-amount').style.color = '#4caf50';
                     startFireworks();
