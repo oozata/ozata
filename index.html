@@ -214,6 +214,56 @@
         @keyframes boxOpen { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         #fireworks { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 8000; }
+
+        /* His Modal - Toast yerine */
+        #feeling-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 4500;
+            justify-content: center;
+            align-items: center;
+        }
+        #feeling-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        #feeling-modal .feeling-content {
+            background: linear-gradient(135deg, #1a237e, #0d1442);
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            padding: clamp(20px, 4vh, 35px);
+            text-align: center;
+            max-width: 90%;
+            width: clamp(280px, 45vw, 480px);
+            box-shadow: 0 0 50px rgba(255,215,0,0.6);
+            animation: feelingPop 0.4s ease-out;
+        }
+        @keyframes feelingPop {            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        #feeling-modal .feeling-emoji {
+            font-size: clamp(2.5rem, 7vh, 4rem);
+            display: block;
+            margin-bottom: clamp(10px, 2vh, 20px);
+        }
+        #feeling-modal .feeling-text {
+            font-size: clamp(1rem, 2.5vh, 1.4rem);
+            color: #ffd700;
+            font-weight: bold;
+            font-style: italic;
+            margin-bottom: clamp(15px, 3vh, 25px);
+            line-height: 1.4;
+        }
+        #feeling-modal .feeling-subtext {
+            font-size: clamp(0.75rem, 1.8vh, 0.95rem);
+            color: #aaa;
+            margin-bottom: clamp(15px, 2.5vh, 20px);
+        }
     </style>
 </head>
 <body>
@@ -242,8 +292,8 @@
                 </div>
                 <div class="info">
                     <div class="info-label">KUTUNUZ</div>
-                    <div class="info-value" id="player-box">?</div>
-                </div>                <div class="info">
+                    <div class="info-value" id="player-box">?</div>                </div>
+                <div class="info">
                     <div class="info-label">Kalan</div>
                     <div class="info-value" id="remaining">22</div>
                 </div>
@@ -280,6 +330,18 @@
         </div>
     </div>
 
+    <!-- His Modal (Toast yerine) -->
+    <div id="feeling-modal">
+        <div class="feeling-content">
+            <span class="feeling-emoji" id="feeling-emoji">🔴</span>
+            <div class="feeling-text" id="feeling-text">Kutumda kırmızı hissediyorum!</div>
+            <div class="feeling-subtext">Bu kutuyu açmak istediğinize emin misiniz?</div>
+            <div class="modal-buttons">
+                <button class="btn btn-yes" onclick="confirmOpenBox()">YİNE DE AÇ</button>
+                <button class="btn btn-no" onclick="cancelOpenBox()">VAZGEÇ</button>
+            </div>
+        </div>
+    </div>
     <script>
         // ===== SPLASH =====
         const splash = document.getElementById('splash');
@@ -292,7 +354,8 @@
             started = true;
             let p = 0;
             const duration = 4000;
-            const interval = 100;            const timer = setInterval(() => {
+            const interval = 100;
+            const timer = setInterval(() => {
                 p += 100 / (duration / interval);
                 if (p >= 100) {
                     p = 100;
@@ -316,18 +379,18 @@
         const prizes = [1,5,10,25,50,100,250,500,1000,5000,10000,25000,50000,100000,250000,500000,750000,1000000,2000000,3000000,5000000,5000000];
         
         const avatars = [
-            '😀', '😎', '🤠', '🥳', '😁',
-            '🧐', '🫠', '🥰', '😘', '🎉',
-            '🤪', '😎', '🤠', '🤗', '🤩',
-            '😇', '🤯', '🤓', '🥶', '🤡',
-            '😈', '🎃'
+            '😀', '😎', '', '🥳', '',
+            '🧐', '', '🥰', '😘', '🎉',
+            '', '😎', '🤠', '🤗', '🤩',
+            '😇', '🤯', '', '', '🤡',
+            '', '🎃'
         ];
         
         let boxContents = {}, playerBox = null, opened = [], stage = 0, openedInStage = 0;
         const stages = [4,3,3,3,3,2,2];
         let gameActive = false, offer = 0, lastOffer = 0, audioCtx = null, prizeMap = {};
-        let redOpenedCount = 0; // 4. etapdan sonra kırmızı cezası için
-
+        let redOpenedCount = 0;
+        let pendingBox = null; // His modal'ı için bekleyen kutu
         function initAudio() {
             if (!audioCtx) {
                 try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -341,7 +404,8 @@
                 const now = audioCtx.currentTime;
                 
                 if (type === 'ring') {
-                    for (let i = 0; i < 3; i++) {                        const osc = audioCtx.createOscillator();
+                    for (let i = 0; i < 3; i++) {
+                        const osc = audioCtx.createOscillator();
                         const g = audioCtx.createGain();
                         osc.connect(g); g.connect(audioCtx.destination);
                         osc.type = 'sine';
@@ -375,8 +439,7 @@
                     const filter = audioCtx.createBiquadFilter();
                     filter.type = 'bandpass'; filter.frequency.value = 800;
                     const g = audioCtx.createGain();
-                    g.gain.setValueAtTime(0, now);
-                    g.gain.linearRampToValueAtTime(0.5, now + 0.5);
+                    g.gain.setValueAtTime(0, now);                    g.gain.linearRampToValueAtTime(0.5, now + 0.5);
                     g.gain.setValueAtTime(0.5, now + 1.5);
                     g.gain.exponentialRampToValueAtTime(0.01, now + 3);
                     noise.connect(filter); filter.connect(g); g.connect(audioCtx.destination);
@@ -390,7 +453,8 @@
                         osc.frequency.setValueAtTime(400, now + i*0.4);
                         osc.frequency.exponentialRampToValueAtTime(250, now + i*0.4 + 0.3);
                         g.gain.setValueAtTime(0, now + i*0.4);
-                        g.gain.linearRampToValueAtTime(0.3, now + i*0.4 + 0.1);                        g.gain.exponentialRampToValueAtTime(0.01, now + i*0.4 + 0.3);
+                        g.gain.linearRampToValueAtTime(0.3, now + i*0.4 + 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + i*0.4 + 0.3);
                         osc.start(now + i*0.4);
                         osc.stop(now + i*0.4 + 0.3);
                     }
@@ -424,8 +488,7 @@
                 ctx.fillStyle = 'rgba(0,0,0,0.1)';
                 ctx.fillRect(0,0,c.width,c.height);
                 if (Math.random() < 0.05) fws.push(new FW(Math.random()*c.width, Math.random()*c.height*0.6));
-                fws.forEach(f => { f.update(); f.draw(ctx); });
-                fws = fws.filter(f => f.p.length > 0);
+                fws.forEach(f => { f.update(); f.draw(ctx); });                fws = fws.filter(f => f.p.length > 0);
                 requestAnimationFrame(anim);
             }
             anim();
@@ -434,12 +497,14 @@
 
         // ===== YARDIMCI FONKSİYONLAR =====
         function roundTo5000(n) {
-            return Math.round(n / 5000) * 5000;
+            const rounded = Math.round(n / 5000) * 5000;
+            return Math.max(rounded, 1000);
         }
 
         function isRed(prize) {
             return prize >= 750000;
         }
+
         function getMedian(sortedArray) {
             const len = sortedArray.length;
             if (len === 0) return 0;
@@ -454,6 +519,95 @@
             return array.filter(p => isRed(p)).length;
         }
 
+        // ===== HIS (FEELING) SISTEMI =====
+        function generateFeeling(remainingPrizes) {
+            const sorted = [...remainingPrizes].sort((a, b) => a - b);
+            
+            const reds = sorted.filter(p => p >= 750000);
+            const yellows = sorted.filter(p => p >= 25000 && p <= 500000);
+            const blues = sorted.filter(p => p <= 10000);
+            
+            const redCount = reds.length;
+            const yellowCount = yellows.length;
+            const blueCount = blues.length;
+            const total = sorted.length;
+            
+            const availableColors = [];
+            if (redCount > 0) availableColors.push({ name: 'kırmızı', count: redCount, emoji: '🔴', weight: redCount });
+            if (yellowCount > 0) availableColors.push({ name: 'sarı', count: yellowCount, emoji: '🟡', weight: yellowCount });
+            if (blueCount > 0) availableColors.push({ name: 'mavi', count: blueCount, emoji: '', weight: blueCount });
+            
+            if (availableColors.length === 0) return null;            
+            if (Math.random() < 0.25 && total > 1) {
+                const randomPrize = sorted[Math.floor(Math.random() * sorted.length)];
+                return {
+                    emoji: '',
+                    text: `Kutumda ${randomPrize.toLocaleString('tr-TR')} TL hissediyorum!`
+                };
+            }
+            
+            const totalWeight = availableColors.reduce((sum, c) => sum + c.weight, 0);
+            let random = Math.random() * totalWeight;
+            let selectedColor = availableColors[0];
+            
+            for (const color of availableColors) {
+                random -= color.weight;
+                if (random <= 0) {
+                    selectedColor = color;
+                    break;
+                }
+            }
+            
+            const messages = [
+                `Kutumda ${selectedColor.name} hissediyorum!`,
+                `İçimde ${selectedColor.name} bir his var...`,
+                `Kutum ${selectedColor.name} gibi duruyor!`,
+                `Bence kutumda ${selectedColor.name} var!`,
+                `${selectedColor.name} çıkacak gibi hissediyorum!`
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            return {
+                emoji: selectedColor.emoji,
+                text: randomMessage
+            };
+        }
+
+        function showFeelingModal(remainingPrizes, boxNum) {
+            const feeling = generateFeeling(remainingPrizes);
+            if (!feeling) {
+                // His oluşamazsa direkt aç
+                pendingBox = boxNum;
+                confirmOpenBox();
+                return;
+            }
+            
+            pendingBox = boxNum;
+            
+            const modal = document.getElementById('feeling-modal');
+            const emojiEl = document.getElementById('feeling-emoji');            const textEl = document.getElementById('feeling-text');
+            
+            emojiEl.textContent = feeling.emoji;
+            textEl.textContent = feeling.text;
+            
+            modal.classList.add('show');
+        }
+
+        function confirmOpenBox() {
+            document.getElementById('feeling-modal').classList.remove('show');
+            if (pendingBox !== null) {
+                openBox(pendingBox);
+                pendingBox = null;
+            }
+        }
+
+        function cancelOpenBox() {
+            document.getElementById('feeling-modal').classList.remove('show');
+            pendingBox = null;
+            // Oyuncu vazgeçti, tekrar kutu seçebilir
+        }
+
         // ===== YENİ BANKA TEKLİF MANTIĞI =====
         function calculateBankerOffer(remainingPrizes, currentStage) {
             const sorted = [...remainingPrizes].sort((a, b) => a - b);
@@ -464,85 +618,58 @@
             
             let offer = 0;
 
-            // ===== İLK 4 ETAP: Sabit band =====
             if (currentStage < 4) {
                 const stageBands = [
-                    { min: 10000, max: 30000 },    // Etap 1
-                    { min: 30000, max: 80000 },    // Etap 2
-                    { min: 80000, max: 200000 },   // Etap 3
-                    { min: 200000, max: 500000 }   // Etap 4
+                    { min: 10000, max: 30000 },
+                    { min: 30000, max: 80000 },
+                    { min: 80000, max: 200000 },
+                    { min: 200000, max: 500000 }
                 ];
                 
                 const band = stageBands[currentStage];
                 
-                // Medyan bazlı ayarlama
-                const medianRatio = median / 100000; // 100.000'e göre oran
+                const medianRatio = median / 100000;
                 const baseOffer = band.min + (band.max - band.min) * Math.min(medianRatio, 1);
                 
-                // Kırmızı açıldıysa biraz düşür
                 let adjustment = 1.0;
                 if (redCount > 0) adjustment -= redCount * 0.05;
                 
                 offer = baseOffer * adjustment;
-                
-                // Rastgelelik ±%15
-                offer *= (0.85 + Math.random() * 0.3);
-                
-                // Yuvarla                offer = roundTo5000(offer);
-                
-                // Sınır kontrolleri
+                offer *= (0.85 + Math.random() * 0.3);                offer = roundTo5000(offer);
                 offer = Math.max(offer, band.min);
                 
-                // İlk 4 etapta maksimum sınır
                 const maxLimit = (redCount === 0) ? 800000 : 500000;
                 offer = Math.min(offer, maxLimit);
                 
                 return offer;
             }
 
-            // ===== 4. ETAP SONRASI: Medyan bazlı =====
             if (currentStage === 6) {
-                // Son etap: Kalan 2 ödülün ortalaması × %90-97
                 const avg = (sorted[0] + sorted[1]) / 2;
                 offer = avg * (0.90 + Math.random() * 0.07);
                 offer = roundTo5000(offer);
+                offer = Math.max(offer, minPrize);
+                offer = Math.min(offer, maxPrize);
             } else {
-                // Etap 4-6: Medyan bazlı
                 let multiplier;
                 
                 if (redCount >= 3) {
-                    // Çok kırmızı → Medyanın %120-180'i
-                    multiplier = 1.20 + Math.random() * 0.60;
+                    multiplier = 1.10 + Math.random() * 0.30;
                 } else if (redCount >= 1) {
-                    // Orta kırmızı → Medyanın %90-120'si
-                    multiplier = 0.90 + Math.random() * 0.30;
+                    multiplier = 1.00 + Math.random() * 0.25;
                 } else {
-                    // Az/yok kırmızı → Medyanın %60-90'ı
-                    multiplier = 0.60 + Math.random() * 0.30;
+                    multiplier = 0.85 + Math.random() * 0.25;
                 }
                 
                 offer = median * multiplier;
                 
-                // 4. etapdan sonra her kırmızı için -%25 (toplamda)
-                // redOpenedCount 4. etapdan sonra açılan kırmızı sayısı
                 if (redOpenedCount > 0) {
                     offer *= Math.pow(0.75, redOpenedCount);
                 }
                 
-                // Rastgelelik ±%10
                 offer *= (0.90 + Math.random() * 0.20);
-                
                 offer = roundTo5000(offer);
-            }
-
-            // ===== KISITLAMALAR =====
-            // Minimum: kalan en küçük ödülün altına inemez
-            offer = Math.max(offer, minPrize);            
-            // Maksimum: kalan en büyük ödülün üstüne çıkamaz
-            offer = Math.min(offer, maxPrize);
-            
-            // Son kontrol: medyanın çok üstüne çıkmasın (aşırı cömert olmasın)
-            if (currentStage < 6) {
+                offer = Math.max(offer, 5000);
                 offer = Math.min(offer, maxPrize * 0.95);
             }
 
@@ -552,13 +679,12 @@
         // ===== OYUN MANTIĞI =====
         function init() {
             playerBox = null; opened = []; stage = 0; openedInStage = 0; gameActive = true; offer = 0; lastOffer = 0;
-            redOpenedCount = 0;
+            redOpenedCount = 0; pendingBox = null;
             boxContents = {}; prizeMap = {};
             const shuf = [...prizes].sort(() => Math.random() - 0.5);
             for (let i = 1; i <= 22; i++) boxContents[i] = shuf[i-1];
             renderPrizes();
-            renderBoxes();
-            document.getElementById('stage').textContent = 'Kendi kutunuzu seçin!';
+            renderBoxes();            document.getElementById('stage').textContent = 'Kendi kutunuzu seçin!';
             document.getElementById('last-offer').textContent = '0 TL';
             document.getElementById('player-box').textContent = '?';
             document.getElementById('remaining').textContent = '22';
@@ -586,7 +712,8 @@
                 if (!prizeMap[p]) prizeMap[p] = [];
                 prizeMap[p].push(id);
                 (p <= 10000 ? l : r).appendChild(el);
-            });        }
+            });
+        }
 
         function renderBoxes() {
             const g = document.getElementById('boxes');
@@ -606,13 +733,20 @@
             if (!gameActive || opened.includes(n)) return;
             if (playerBox === null) {
                 playerBox = n;
-                document.getElementById(`box-${n}`).classList.add('player');
-                document.getElementById('player-box').textContent = n;
+                document.getElementById(`box-${n}`).classList.add('player');                document.getElementById('player-box').textContent = n;
                 document.getElementById('stage').textContent = `1. Etap: ${stages[0]} kutu açın`;
                 return;
             }
             if (n === playerBox) { alert("Kendi kutunuzu açamazsınız!"); return; }
-            openBox(n);
+            
+            // Kalan ödülleri hesapla
+            const currentRemaining = prizes.filter(pr => {
+                if (boxContents[playerBox] === pr) return true;
+                return !opened.some(bx => boxContents[bx] === pr);
+            });
+            
+            // His modal'ını göster
+            showFeelingModal(currentRemaining, n);
         }
 
         function openBox(n) {
@@ -635,9 +769,9 @@
             setTimeout(() => {
                 m.classList.remove('show');
                 anim.classList.remove('box-open-anim');
-                opened.push(n);                openedInStage++;
+                opened.push(n);
+                openedInStage++;
                 
-                // Kırmızı açıldıysa sayacı artır (4. etapdan sonra ceza için)
                 if (isRed(p) && stage >= 3) {
                     redOpenedCount++;
                 }
@@ -648,9 +782,9 @@
                 if (prizeMap[p] && prizeMap[p].length > 0) {
                     const id = prizeMap[p].shift();
                     const el = document.getElementById(id);
-                    if (el) el.classList.add('opened');
-                }
+                    if (el) el.classList.add('opened');                }
                 document.getElementById('remaining').textContent = 22 - opened.length;
+                
                 if (openedInStage >= stages[stage]) {
                     gameActive = false;
                     setTimeout(banker, 800);
@@ -662,7 +796,6 @@
         }
 
         function banker() {
-            // Kalan ödülleri hesapla (oyuncunun kutusu dahil)
             const remaining = prizes.filter(p => {
                 if (boxContents[playerBox] === p) return true;
                 return !opened.some(b => boxContents[b] === p);
@@ -670,7 +803,6 @@
             
             if (remaining.length === 0) { openOwn(); return; }
             
-            // YENİ MANTIK: Medyan bazlı teklif
             offer = calculateBankerOffer(remaining, stage);
             
             playSound('ring');
@@ -684,6 +816,7 @@
             document.getElementById('banker-modal').classList.remove('show');
             result(true);
         }
+
         function reject() {
             document.getElementById('banker-modal').classList.remove('show');
             lastOffer = offer;
@@ -698,8 +831,7 @@
         }
 
         function openOwn() {
-            openBox(playerBox);
-            setTimeout(() => result(false), 3000);
+            openBox(playerBox);            setTimeout(() => result(false), 3000);
         }
 
         function result(acc) {
@@ -708,7 +840,7 @@
             document.getElementById('result-amount').textContent = fin.toLocaleString('tr-TR') + ' TL';
             document.getElementById('result-modal').classList.add('show');
             if (acc) {
-                document.getElementById('result-title').textContent = pp <= fin ? '🎉 TEBRİKLER!' : '😔 SONUÇ';
+                document.getElementById('result-title').textContent = pp <= fin ? ' TEBRİKLER!' : '😔 SONUÇ';
                 document.getElementById('result-msg').innerHTML = `Banka teklifini kabul ettiniz.<br>Kutunuzda: ${pp.toLocaleString('tr-TR')} TL vardı.`;
                 document.getElementById('result-amount').style.color = fin >= pp ? '#4caf50' : '#ff9800';
                 if (fin >= pp) startFW();
@@ -733,7 +865,8 @@
                 if (!opened.includes(i)) {
                     document.getElementById(`box-${i}`).innerHTML = `<div style="font-size:0.55rem;color:#ffd700;">${boxContents[i].toLocaleString('tr-TR')} TL</div>`;
                 }
-            }        }
+            }
+        }
     </script>
 </body>
 </html>
